@@ -13,7 +13,6 @@ from fastapi import Request
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from geodense.geojson import CrsFeatureCollection
 from geodense.lib import (  # type: ignore  # type: ignore
-    THREE_DIMENSIONAL,
     GeojsonObject,
     _geom_type_check,
     apply_function_on_geojson_geometries,
@@ -23,7 +22,7 @@ from geodense.lib import (  # type: ignore  # type: ignore
 )
 from geodense.models import DenseConfig, GeodenseError
 from geodense.types import Nested
-from geojson_pydantic import Feature, GeometryCollection
+from geojson_pydantic import Feature, GeometryCollection, Point
 from geojson_pydantic.geometries import Geometry
 from pydantic import ValidationError
 from pydantic_core import InitErrorDetails, PydanticCustomError
@@ -337,13 +336,6 @@ def raise_req_validation_error(
     )
 
 
-def convert_point_coords_to_wkt(coords):
-    geom_type = "POINT"
-    if len(coords) == THREE_DIMENSIONAL:
-        geom_type = "POINT Z"
-    return f"{geom_type}({' '.join([str(x) for x in coords])})"
-
-
 def get_crs(crs_str: str, crs_list: list[MyCrs]) -> MyCrs:
     crs = next((x for x in crs_list if x.crs_auth_identifier == crs_str), None)
     if crs is None:
@@ -399,7 +391,7 @@ def get_source_crs(
     return s_crs
 
 
-def post_transform_get_crss(  # noqa: PLR0913
+def get_crss(  # noqa: PLR0913
     body: Feature | CrsFeatureCollection | Geometry | GeometryCollection | CityjsonV113,
     source_crs: str,
     target_crs: str,
@@ -450,40 +442,6 @@ def post_transform_get_crss(  # noqa: PLR0913
     t_crs = extract_authority_code(t_crs)
 
     validate_crs_transformation(source_crs, target_crs, crs_list)
-    return s_crs, t_crs
-
-
-def get_transform_get_crss(
-    source_crs: str,
-    target_crs: str,
-    content_crs: str,
-    accept_crs: str,
-    crs_list: list[MyCrs],
-) -> tuple[str, str]:
-    if source_crs is not None:
-        s_crs = source_crs
-    elif source_crs is None and content_crs is not None:
-        s_crs = content_crs
-    else:
-        raise_validation_error(
-            "No source CRS found in request. Defining a source CRS is required through the query parameter source-crs or header content-crs",
-            ("query", "source-crs", "header", "content-crs"),
-        )
-
-    if target_crs is not None:
-        t_crs = target_crs
-    elif target_crs is None and accept_crs is not None:
-        t_crs = accept_crs
-    else:
-        raise_validation_error(
-            "No target CRS found in request. Defining a target CRS is required through the query parameter target-crs or header accept-crs",
-            ("query", "target-crs", "header", "accept-crs"),
-        )
-
-    s_crs = extract_authority_code(s_crs)
-    t_crs = extract_authority_code(t_crs)
-
-    validate_crs_transformation(source_crs, target_crs, crs_list)
 
     return s_crs, t_crs
 
@@ -513,3 +471,17 @@ def set_response_headers(t_crs: str, epoch: float | None = None) -> dict[str, st
         headers["epoch"] = str(epoch)
 
     return headers
+
+
+def make_point(coordinates: str) -> Point:
+    # The string_pattern on the API endpoints already saveguard
+    # against input values that don't match on 2 or 3 floats
+    two_dimensional = 2
+
+    crds = coordinates.split(",")
+    if len(crds) == two_dimensional:
+        x, y = (float(c) for c in crds)
+        return Point(type="Point", coordinates=(x, y))
+    else:
+        x, y, z = (float(c) for c in crds)
+        return Point(type="Point", coordinates=(x, y, z))

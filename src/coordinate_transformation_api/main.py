@@ -14,7 +14,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
 from geodense.geojson import CrsFeatureCollection
-from geojson_pydantic import Feature
+from geojson_pydantic import Feature, Point
 from geojson_pydantic.geometries import Geometry, GeometryCollection
 
 from coordinate_transformation_api import assets
@@ -35,19 +35,15 @@ from coordinate_transformation_api.models import (
 from coordinate_transformation_api.settings import app_settings
 from coordinate_transformation_api.util import (
     accept_html,
-    convert_point_coords_to_wkt,
     crs_transform,
     densify_request_body,
     density_check_request_body,
+    get_crss,
     get_src_crs_densify,
-    get_transform_get_crss,
     init_oas,
-    post_transform_get_crss,
-    raise_response_validation_error,
+    make_point,
     raise_validation_error,
     set_response_headers,
-    transform_coordinates,
-    validate_coords_source_crs,
     validate_crs_transformed_geojson,
     validate_input_max_segment_deviation_length,
 )
@@ -311,8 +307,50 @@ async def density_check(  # noqa: ANN201
     return result
 
 
+def transform(
+    object: Union[
+        Feature,
+        CrsFeatureCollection,
+        Geometry,
+        GeometryCollection,
+        CityjsonV113,
+    ],
+    source_crs: str,
+    target_crs: str,
+    epoch: float | None,
+    accept: str | None,
+) -> Response:
+    if exclude_transformation(source_crs, target_crs):
+        raise_validation_error(
+            f"Transformation not possible between {source_crs} and {target_crs}",
+            [("query", "source-crs"), ("query", "target-crs")],
+        )
+
+    if isinstance(object, Point) and str(TransformGetAcceptHeaders.wkt.value) == accept:
+        return PlainTextResponse(
+            object.wkt,
+            headers=set_response_headers(target_crs, epoch),
+        )
+
+    if isinstance(object, CityjsonV113):
+        object.crs_transform(source_crs, target_crs, epoch)
+        return Response(
+            content=object.model_dump_json(exclude_none=True),
+            media_type="application/city+json",
+        )
+
+    else:
+        crs_transform(object, source_crs, target_crs, epoch)
+        validate_crs_transformed_geojson(object)
+
+        return JSONResponse(
+            content=object.model_dump(exclude_none=True),
+            headers=set_response_headers(target_crs, epoch),
+        )
+
+
 @app.get("/transform")
-async def transform(  # noqa: PLR0913, ANN201
+async def get_transform(  # noqa: PLR0913, ANN201
     coordinates: Annotated[
         str,
         Query(alias="coordinates", pattern=r"^(\d+\.?\d*),(\d+\.?\d*)(,\d+\.?\d*)?$"),
@@ -324,48 +362,16 @@ async def transform(  # noqa: PLR0913, ANN201
     epoch: Annotated[float | None, Query(alias="epoch")] = None,
     accept: Annotated[str, Header()] = TransformGetAcceptHeaders.json.value,
 ):
-    # get string values from CrsEnum|None parameters
-    source_crs_str: str
-    target_crs_str: str
-    content_crs_str: str
-    accept_crs_str: str
-    source_crs_str, target_crs_str, content_crs_str, accept_crs_str = (
-        x.value if x is not None else None
-        for x in [source_crs, target_crs, content_crs, accept_crs]
+    s_crs, t_crs = get_crss(
+        None,
+        source_crs.value if source_crs is not None else None,
+        target_crs.value if target_crs is not None else None,
+        content_crs.value if content_crs is not None else None,
+        accept_crs.value if accept_crs is not None else None,
+        CRS_LIST,
     )
 
-    if exclude_transformation(source_crs_str, target_crs_str):
-        raise_validation_error(
-            f"Transformation not possible between {source_crs_str} and {target_crs_str}",
-            [("query", "source-crs"), ("query", "target-crs")],
-        )
-
-    s_crs, t_crs = get_transform_get_crss(
-        source_crs_str, target_crs_str, content_crs_str, accept_crs_str, CRS_LIST
-    )
-
-    validate_coords_source_crs(coordinates, s_crs, CRS_LIST)
-
-    transformed_coordinates = transform_coordinates(
-        coordinates, s_crs, t_crs, epoch, CRS_LIST
-    )
-
-    if float("inf") in [abs(x) for x in transformed_coordinates]:
-        raise_response_validation_error(
-            "Out of range float values are not JSON compliant", ["responseBody"]
-        )
-
-    if accept == str(TransformGetAcceptHeaders.wkt.value):
-        wkt_string = convert_point_coords_to_wkt(coordinates)
-        PlainTextResponse(
-            wkt_string,
-            headers=set_response_headers(t_crs, epoch),
-        )
-    else:  # default case serve json
-        return JSONResponse(
-            content={"type": "Point", "coordinates": transformed_coordinates},
-            headers=set_response_headers(t_crs, epoch),
-        )
+    return transform(make_point(coordinates), s_crs, t_crs, epoch, accept)
 
 
 @app.post(
@@ -385,40 +391,16 @@ async def post_transform(  # noqa: ANN201, PLR0913
     accept_crs: Annotated[CrsEnum | None, Header(alias="accept-crs")] = None,
     epoch: Annotated[float | None, Query(alias="epoch")] = None,
 ):
-    # get string values from CrsEnum|None parameters
-    source_crs_str: str
-    target_crs_str: str
-    content_crs_str: str
-    accept_crs_str: str
-    source_crs_str, target_crs_str, content_crs_str, accept_crs_str = (
-        x.value if x is not None else None
-        for x in [source_crs, target_crs, content_crs, accept_crs]
+    s_crs, t_crs = get_crss(
+        body,
+        source_crs.value if source_crs is not None else None,
+        target_crs.value if target_crs is not None else None,
+        content_crs.value if content_crs is not None else None,
+        accept_crs.value if accept_crs is not None else None,
+        CRS_LIST,
     )
 
-    if exclude_transformation(source_crs_str, target_crs_str):
-        raise_validation_error(
-            f"Transformation not possible between {source_crs_str} and {target_crs_str}",
-            [("query", "source-crs"), ("query", "target-crs")],
-        )
-
-    s_crs, t_crs = post_transform_get_crss(
-        body, source_crs_str, target_crs_str, content_crs_str, accept_crs_str, CRS_LIST
-    )
-
-    if isinstance(body, CityjsonV113):
-        body.crs_transform(s_crs, t_crs, epoch)
-        return Response(
-            content=body.model_dump_json(exclude_none=True),
-            media_type="application/city+json",
-        )
-    else:
-        crs_transform(body, s_crs, t_crs, epoch)
-        validate_crs_transformed_geojson(body)
-
-        return JSONResponse(
-            content=body.model_dump(exclude_none=True),
-            headers=set_response_headers(t_crs, epoch),
-        )
+    return transform(body, s_crs, t_crs, epoch, accept=None)
 
 
 app.openapi = lambda: OPEN_API_SPEC  # type: ignore
