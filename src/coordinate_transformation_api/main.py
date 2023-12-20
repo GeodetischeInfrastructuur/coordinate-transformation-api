@@ -18,8 +18,8 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
 from geodense.geojson import CrsFeatureCollection
-from geojson_pydantic import Feature, Point
-from geojson_pydantic.geometries import Geometry, GeometryCollection
+from geojson_pydantic import Feature
+from geojson_pydantic.geometries import Geometry, GeometryCollection, Point
 
 import coordinate_transformation_api
 from coordinate_transformation_api import assets
@@ -343,12 +343,6 @@ def transform(
             [("query", "source-crs"), ("query", "target-crs")],
         )
 
-    if isinstance(object, Point) and str(TransformGetAcceptHeaders.wkt.value) == accept:
-        return PlainTextResponse(
-            object.wkt,
-            headers=set_response_headers(target_crs, epoch),
-        )
-
     if isinstance(object, CityjsonV113):
         object.crs_transform(source_crs, target_crs, epoch)
         return Response(
@@ -360,10 +354,19 @@ def transform(
         crs_transform(object, source_crs, target_crs, epoch)
         validate_crs_transformed_geojson(object)
 
-        return JSONResponse(
-            content=object.model_dump(exclude_none=True),
-            headers=set_response_headers(target_crs, epoch),
-        )
+        if (
+            isinstance(object, Point)
+            and str(TransformGetAcceptHeaders.wkt.value) == accept
+        ):
+            return PlainTextResponse(
+                object.wkt,
+                headers=set_response_headers(target_crs, epoch),
+            )
+        else:
+            return JSONResponse(
+                content=object.model_dump(exclude_none=True),
+                headers=set_response_headers(target_crs, epoch),
+            )
 
 
 @app.get("/transform")
