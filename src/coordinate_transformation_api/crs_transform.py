@@ -199,7 +199,7 @@ def get_transformer(source_crs: str, target_crs: str) -> Transformer:
     aoi = transformer.AreaOfInterest(3.2, 50.75, 7.22, 53.7)
 
     # Get available transformer through TransformerGroup
-    # TODO check/validate if always_xy=True is correct
+    # always_xy=True is set because the outputs are WKT/GeoJSON and that is always x,y
     tfg = transformer.TransformerGroup(
         s_crs, t_crs, allow_ballpark=False, always_xy=True, area_of_interest=aoi
     )

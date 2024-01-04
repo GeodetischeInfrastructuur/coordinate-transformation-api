@@ -337,12 +337,15 @@ def transform(
     epoch: float | None,
     accept: str | None,
 ) -> Response:
+    # Check if it's a known invalid transformation for example like van 2D -> 3D
+    # with EPSG:28992 to EPSG:7415 based on the config.yaml
     if exclude_transformation(source_crs, target_crs):
         raise_validation_error(
             f"Transformation not possible between {source_crs} and {target_crs}",
             [("query", "source-crs"), ("query", "target-crs")],
         )
 
+    # Check if it's a CityJSON or not
     if isinstance(object, CityjsonV113):
         object.crs_transform(source_crs, target_crs, epoch)
         return Response(
@@ -354,6 +357,7 @@ def transform(
         crs_transform(object, source_crs, target_crs, epoch)
         validate_crs_transformed_geojson(object)
 
+        # Check if it's a Point with WKT output or not
         if (
             isinstance(object, Point)
             and str(TransformGetAcceptHeaders.wkt.value) == accept
