@@ -352,7 +352,7 @@ def build_input_coord(coord: CoordinatesType, epoch: float | None) -> Coordinate
     return input_coord
 
 
-def get_transform_crs_fun(  # noqa: C901
+def get_transform_crs_fun(  # noqa: C901,PLR0915
     source_crs: CRS,
     target_crs: CRS,
     precision: int | None = None,
@@ -432,6 +432,9 @@ def get_transform_crs_fun(  # noqa: C901
             result = h[0:2]
             if not math.isinf(*v[2:3]):  # type: ignore
                 result += v[2:3]
+            else:
+                # height coordinate dropped
+                pass
 
             if any([math.isinf(x) for x in result]):
                 raise InfValCoordinateError("Coordinates contain inf val")
@@ -478,6 +481,9 @@ def get_transform_crs_fun(  # noqa: C901
                     output = output[0:2] + tuple(
                         [height],
                     )
+            else:
+                # height coordinate dropped
+                pass
 
             if any([math.isinf(x) for x in output]):
                 raise InfValCoordinateError("Coordinates contain inf val")
