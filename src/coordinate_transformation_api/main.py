@@ -30,7 +30,9 @@ from coordinate_transformation_api.constants import (
     DENSITY_CHECK_RESULT_HEADER,
     THREE_DIMENSIONAL,
 )
-from coordinate_transformation_api.crs_transform import CRS_CONFIG
+from coordinate_transformation_api.crs_transform import (
+    CRS_CONFIG,
+)
 from coordinate_transformation_api.fastapi_rfc7807 import middleware
 from coordinate_transformation_api.limit_middleware.middleware import (
     ContentSizeLimitMiddleware,
@@ -62,12 +64,10 @@ from coordinate_transformation_api.util import (
     post_transform_get_crss,
     raise_request_validation_error,
     raise_response_validation_error,
-    remove_height_when_inf_geojson,
     set_response_headers,
     str_to_crs,
     transform_coordinates,
     validate_coords_source_crs,
-    validate_crs_transformed_geojson,
 )
 
 assets_resources = impresources.files(assets)
@@ -159,9 +159,9 @@ async def add_api_version(request: Request, call_next: Callable) -> Response:
         # overwrite response in case route is a know route with trailing slash
         for route in app.routes:
             if isinstance(route, APIRoute) and request.url.path == f"{route.path}/":
-                response_body["detail"] = (
-                    f"not found, path contains trailing slash try {route.path}"
-                )
+                response_body[
+                    "detail"
+                ] = f"not found, path contains trailing slash try {route.path}"
                 response = Response(
                     content=json.dumps(response_body),
                     status_code=404,
@@ -498,10 +498,12 @@ async def post_transform(  # noqa: ANN201, PLR0913
                 headers=response_headers,
             )
 
-        crs_transform(body, s_crs, t_crs, epoch)
-        validate_crs_transformed_geojson(body)
+        body_t = crs_transform(body, s_crs, t_crs, epoch)
+
+        # TODO: implement response header to indicate dropped geometries due to inf values in transformed coordinates
+
         response_headers = set_response_headers(
-            ("content-crs", ("content-crs", "{}:{}".format(*t_crs.to_authority()))),
+            ("content-crs", "{}:{}".format(*t_crs.to_authority())),
             headers=response_headers,
         )
         if epoch is not None:
@@ -509,9 +511,7 @@ async def post_transform(  # noqa: ANN201, PLR0913
                 ("epoch", epoch), headers=response_headers
             )
 
-        response_body = remove_height_when_inf_geojson(body).model_dump(
-            exclude_none=True
-        )
+        response_body = body_t.model_dump(exclude_none=False)
         return JSONResponse(
             content=response_body,
             headers=response_headers,

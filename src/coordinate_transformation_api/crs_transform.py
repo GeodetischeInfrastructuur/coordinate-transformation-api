@@ -1,3 +1,4 @@
+import math
 from collections.abc import Generator
 from importlib import resources as impresources
 from itertools import chain
@@ -7,9 +8,10 @@ import yaml
 from geodense.geojson import CrsFeatureCollection
 from geodense.lib import (  # type: ignore  # type: ignore
     GeojsonObject,
-    apply_function_on_geojson_geometries,
+    InfValCoordinateError,
+    traverse_geojson_geometries,
 )
-from geodense.types import GeojsonCoordinates, GeojsonGeomNoGeomCollection
+from geodense.types import GeojsonGeomNoGeomCollection
 from geojson_pydantic import Feature, GeometryCollection
 from geojson_pydantic.geometries import _GeometryBase
 from geojson_pydantic.types import BBox
@@ -50,8 +52,10 @@ def get_precision(crs: CRS) -> int:
 def get_shapely_objects(
     body: GeojsonObject,
 ) -> list[ShapelyGeometry]:
-    transform_fun = get_shapely_object_fun()
-    result = apply_function_on_geojson_geometries(body, transform_fun)
+    def shapely_object(geometry: GeojsonGeomNoGeomCollection) -> ShapelyGeometry:
+        return shape(geometry)
+
+    result = traverse_geojson_geometries(body, shapely_object)
     flat_result: list[ShapelyGeometry] = []
     for item in result:
         if isinstance(item, list):
@@ -61,70 +65,43 @@ def get_shapely_objects(
     return flat_result
 
 
-def get_shapely_object_fun() -> Callable:
-    def shapely_object(geometry: GeojsonGeomNoGeomCollection) -> ShapelyGeometry:
-        return shape(geometry)
+def crs_transform_geometry(
+    transform_callback: Callable[
+        [CoordinatesType],
+        tuple[float, ...],
+    ],
+    geom: GeojsonGeomNoGeomCollection,
+) -> None:
+    """CRS transform geojson geometry objects
 
-    return shapely_object
-
-
-def get_crs_transform_fun(
-    source_crs: CRS, target_crs: CRS, epoch: float | None = None
-) -> Callable:
-    precision = get_precision(target_crs)
-
-    def my_fun(
-        geom: GeojsonGeomNoGeomCollection,
-    ) -> GeojsonCoordinates:
-        callback = get_transform_crs_fun(source_crs, target_crs, precision, epoch=epoch)
-        geom.coordinates = traverse_geojson_coordinates(
-            cast(list[list[Any]] | list[float] | list[int], geom.coordinates),
-            callback=callback,
-        )
-        return geom.coordinates
-
-    return my_fun
+    Arguments:
+        geom -- geojson geometry object, coordinates of geometry are edited in place
+    """
+    coord_t = traverse_geojson_coordinates(
+        cast(list[list[Any]] | list[float] | list[int], geom.coordinates),
+        callback=transform_callback,
+    )
+    geom.coordinates = coord_t
 
 
-# Strip height from coordinate
-# [1,2,3] -> [1,2]
-def get_remove_json_height_fun() -> Callable[[CoordinatesType], tuple[float, ...]]:
-    def remove_json_height_fun(
-        val: CoordinatesType,
-    ) -> tuple[float, ...]:
-        return cast(tuple[float, ...], val[0:2])
+# def get_crs_transform_fun(source_crs: CRS, target_crs: CRS, epoch: float | None = None) -> Callable:
+#     # callback = get_transform_crs_fun(source_crs, target_crs, epoch=epoch)
 
-    return remove_json_height_fun
+#     def crs_transform_geometry(
+#         geom: GeojsonGeomNoGeomCollection,
+#     ) -> None:
+#         """CRS transform geojson geometry objects
 
+#         Arguments:
+#             geom -- geojson geometry object, coordinates of geometry are edited in place
+#         """
 
-def get_json_height_contains_inf_fun() -> Callable[[GeojsonGeomNoGeomCollection], bool]:
-    def json_height_contains_inf(
-        geometry: GeojsonGeomNoGeomCollection,
-    ) -> bool:
-        coordinates = get_coordinate_from_geometry(geometry)
-        gen = (
-            x
-            for x in explode(coordinates)
-            if len(x) == THREE_DIMENSIONAL and abs(x[2]) == float("inf")
-        )
-        return next(gen, None) is not None
+#         geom.coordinates = traverse_geojson_coordinates(
+#             cast(list[list[Any]] | list[float] | list[int], geom.coordinates),
+#             callback=callback,
+#         )
 
-    return json_height_contains_inf
-
-
-def get_json_coords_contains_inf_fun() -> Callable[[GeojsonGeomNoGeomCollection], bool]:
-    def json_coords_contains_inf(
-        geometry: GeojsonGeomNoGeomCollection,
-    ) -> bool:
-        coordinates = get_coordinate_from_geometry(geometry)
-        gen = (
-            x
-            for x in explode(coordinates)
-            if abs(x[0]) == float("inf") or abs(x[1]) == float("inf")
-        )
-        return next(gen, None) is not None
-
-    return json_coords_contains_inf
+#     return crs_transform_geometry
 
 
 def update_bbox_geojson_object(  # noqa: C901
@@ -380,11 +357,11 @@ def get_transform_crs_fun(  # noqa: C901
     target_crs: CRS,
     precision: int | None = None,
     epoch: float | None = None,
-) -> Callable[
-    [CoordinatesType],
-    tuple[float, ...],
-]:
+) -> Callable[[CoordinatesType], tuple[float, ...],]:
     """TODO: improve type annotation/handling geojson/cityjson transformation, with the current implementation mypy is not complaining"""
+
+    if precision is None:
+        precision = get_precision(target_crs)
 
     def my_round(val: float, precision: int | None) -> float | int:
         if precision is None:
@@ -401,7 +378,7 @@ def get_transform_crs_fun(  # noqa: C901
         target_crs is not None
         and source_crs is not target_crs
         and target_crs.is_compound
-        and not source_crs.is_geocentric
+        # and not source_crs.is_geocentric
     ):
         check_axis(source_crs, target_crs)
 
@@ -452,7 +429,13 @@ def get_transform_crs_fun(  # noqa: C901
                 ]
             )
 
-            return h[0:2] + v[2:3]
+            result = h[0:2]
+            if not math.isinf(*v[2:3]):  # type: ignore
+                result += v[2:3]
+
+            if any([math.isinf(x) for x in result]):
+                raise InfValCoordinateError("Coordinates contain inf val")
+            return result
 
         return transform_compound_crs
     else:
@@ -491,9 +474,13 @@ def get_transform_crs_fun(  # noqa: C901
 
             if len(output) >= THREE_DIMENSIONAL:
                 height = my_round(output[2:3][0], HEIGHT_DIGITS_FOR_ROUNDING)
-                return output[0:2] + tuple(
-                    [height],
-                )
+                if not math.isinf(height):
+                    output = output[0:2] + tuple(
+                        [height],
+                    )
+
+            if any([math.isinf(x) for x in output]):
+                raise InfValCoordinateError("Coordinates contain inf val")
 
             return output
 

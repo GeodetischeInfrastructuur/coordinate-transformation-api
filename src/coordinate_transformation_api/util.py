@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import math
 import re
-from collections.abc import Iterable
+from functools import partial
 from importlib import resources as impresources
 from importlib.metadata import version
 from typing import Any, cast
@@ -15,13 +15,12 @@ from geodense.geojson import CrsFeatureCollection
 from geodense.lib import (  # type: ignore  # type: ignore
     GeojsonObject,
     _geom_type_check,
-    apply_function_on_geojson_geometries,
     densify_geojson_object,
     density_check_geojson_object,
-    flatten,
+    transform_geojson_geometries,
+    traverse_geojson_geometries,
 )
 from geodense.models import DenseConfig, GeodenseError
-from geodense.types import GeojsonCoordinates, GeojsonGeomNoGeomCollection, Nested
 from geojson_pydantic import Feature, GeometryCollection
 from geojson_pydantic.geometries import Geometry
 from pydantic import ValidationError
@@ -38,13 +37,12 @@ from coordinate_transformation_api.constants import (
     THREE_DIMENSIONAL,
 )
 from coordinate_transformation_api.crs_transform import (
-    get_crs_transform_fun,
-    get_json_coords_contains_inf_fun,
-    get_json_height_contains_inf_fun,
+    crs_transform_geometry,
+    get_bbox_from_coordinates,
+    get_coordinate_from_geometry,
+    # get_json_coords_contains_inf_fun,
     get_precision,
-    get_remove_json_height_fun,
     get_transform_crs_fun,
-    traverse_geojson_coordinates,
     update_bbox_geojson_object,
 )
 from coordinate_transformation_api.models import (
@@ -171,17 +169,29 @@ def request_body_within_valid_bbox(body: GeojsonObject, source_crs: str) -> bool
     return True
 
 
+def update_bbox(item):
+    if item.bbox is not None:  # only update bbox if already set
+        coords = transform_geojson_geometries(item, get_coordinate_from_geometry)
+        bbox = None
+        if coords:
+            coords = list(filter(lambda x: x is not None, coords))
+            bbox = get_bbox_from_coordinates(coords)
+        item.bbox = bbox
+
+
 def crs_transform(
     body: GeojsonObject,
     s_crs: CRS,
     t_crs: CRS,
     epoch: float | None = None,
-) -> None:
-    crs_transform_fun = get_crs_transform_fun(s_crs, t_crs, epoch)
-    _ = apply_function_on_geojson_geometries(body, crs_transform_fun)
+) -> GeojsonObject:
+    t_callback = get_transform_crs_fun(s_crs, t_crs, epoch=epoch)
+    crs_transform_fun = partial(crs_transform_geometry, t_callback)
+    body_t = traverse_geojson_geometries(body, crs_transform_fun, update_bbox)
+
     if isinstance(body, CrsFeatureCollection):
         body.set_crs_auth_code("{}:{}".format(*t_crs.to_authority()))
-    update_bbox_geojson_object(body)
+    return body_t
 
 
 def density_check_request_body(
@@ -396,44 +406,47 @@ def transform_coordinates(
     return transformed_coordinates
 
 
-def validate_crs_transformed_geojson(body: GeojsonObject) -> None:
-    validate_json_coords_fun = get_json_coords_contains_inf_fun()
-    contains_inf_coords: Nested[bool] = apply_function_on_geojson_geometries(
-        body, validate_json_coords_fun
-    )
-    flat_contains_inf_coords: Iterable[bool] = flatten(contains_inf_coords)
+# def set_geom_null_if_inf_values(
+#     body: Feature | CrsFeatureCollection | GeojsonGeomNoGeomCollection | GeometryCollection,
+# ) -> None:
+#     geometry_contains_inf_coords = get_json_coords_contains_inf_fun()
+#     if isinstance(body, Feature):
+#         feature = cast(Feature, body)
+#         if isinstance(feature.geometry, GeometryCollection):
+#             set_geom_null_if_inf_values(feature.geometry)
 
-    if any(flat_contains_inf_coords):
-        raise_response_validation_error(
-            "Out of range float values are not JSON compliant", ["responseBody"]
-        )
+#         if geometry_contains_inf_coords(feature.geometry):
+#             feature.geometry = None
 
+#     elif isinstance(body, Point | MultiPoint | LineString | MultiLineString | Polygon | MultiPolygon):
+#         geom = cast(GeojsonGeomNoGeomCollection, body)
+#         if geometry_contains_inf_coords(geom):
+#             body = None
+#     elif isinstance(body, CrsFeatureCollection):
+#         fc_body: CrsFeatureCollection = body
+#         features: Iterable[Feature] = fc_body.features
 
-def remove_height_when_inf_geojson(body: GeojsonObject) -> GeojsonObject:
-    # Seperated check on inf height
-    validate_json_height_fun = get_json_height_contains_inf_fun()
-    contains_inf_height: Nested[bool] = apply_function_on_geojson_geometries(
-        body, validate_json_height_fun
-    )
-    flat_contains_inf_height: Iterable[bool] = flatten(contains_inf_height)
+#         for ft in features:
+#             if ft.geometry is None:
+#                 raise GeodenseError(f"feature does not have a geometry, feature: {ft}")
 
-    if any(flat_contains_inf_height):
+#             if isinstance(ft.geometry, GeometryCollection):
+#                 set_geom_null_if_inf_values(ft.geometry)
+#             else:
+#                 set_geom_null_if_inf_values(ft)
 
-        def my_fun(
-            geom: GeojsonGeomNoGeomCollection,
-        ) -> GeojsonCoordinates:
-            callback = get_remove_json_height_fun()
-            geom.coordinates = traverse_geojson_coordinates(
-                cast(list[list[Any]] | list[float] | list[int], geom.coordinates),
-                callback=callback,
-            )
-            return geom.coordinates
+#     elif isinstance(body, GeometryCollection):
+#         gc = cast(GeometryCollection, body)
+#         geometries: list[Geometry] = gc.geometries
 
-        _ = apply_function_on_geojson_geometries(body, my_fun)
-
-        return body
-
-    return body
+#         for i, g in enumerate(geometries):
+#             if isinstance(g, GeometryCollection):
+#                 raise GeodenseError("nested GeometryCollections are not supported")
+#             g_no_gc = cast(
+#                 GeojsonGeomNoGeomCollection, g
+#             )  # geojson prohibits nested geometrycollections - maybe throw exception if this occurs
+#             if geometry_contains_inf_coords(g_no_gc):
+#                 gc.geometries[i] = None  # type:ignore
 
 
 def get_source_crs(
