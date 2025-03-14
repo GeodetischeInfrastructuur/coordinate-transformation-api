@@ -306,7 +306,9 @@ def get_transform_crs_fun(
         )  # this will do the 3d transformation that might fail, in that case Z/H value is dropped
 
         # note transformers are injected in transform_compound_crs so they are instantiated only once
-        _transform_compound_crs = partial(transform_compound_crs, h_transformer, v_transformer, precision, epoch)
+        _transform_compound_crs = partial(
+            transform_compound_crs, h_transformer, v_transformer, target_crs, precision, epoch
+        )
         return _transform_compound_crs
     else:
         transformer = get_transformer(source_crs, target_crs, epoch)
@@ -323,80 +325,88 @@ def _round(precision: int | None, val: float) -> float | int:
         return round(val, precision)
 
 
-def transform_compound_crs(
-    h_transformer: Transformer,
-    v_transformer: Transformer,
+def transform_compound_crs(  # noqa: PLR0913
+    hor_transformer: Transformer,
+    ver_transformer: Transformer,
+    target_crs: CRS,
     precision: int | None,
     epoch: float | None,
-    val: Position,
+    input_pos: Position,
 ) -> Position:
-    input = tuple([*val, float(epoch)]) if epoch is not None else tuple([*val])
+    target_dim = len(target_crs.axis_info)
+    val_epoch = tuple([*input_pos, float(epoch)]) if epoch is not None else tuple([*input_pos])
 
-    _round_h = partial(_round, precision)
-    _round_v = partial(_round, HEIGHT_DIGITS_FOR_ROUNDING)
+    round_hor_f = partial(_round, precision)
+    round_ver_f = partial(_round, HEIGHT_DIGITS_FOR_ROUNDING)
 
-    h = tuple(map(_round_h, h_transformer.transform(*input)))
-    v = tuple(map(_round_v, v_transformer.transform(*input)))
+    hor = tuple(map(round_hor_f, hor_transformer.transform(*val_epoch)))[
+        :2
+    ]  # can contain z coordinate, since PROJ retains Z value even if target-crs is 2d, so limit to two coordinates
 
-    output_2d = Position2D(*h[:2])
-    output: Position = output_2d
-    if len(v) >= THREE_DIMENSIONAL and not math.isinf(
-        v[2]
-    ):  # note len(v) can be larger than three when epoch is supplied
-        output = Position3D(*output_2d, v[2])
-    else:
-        # height coordinate dropped, since v[2] not added
-        pass
+    pos_2d = Position2D(*hor[:2])
+
+    output_pos: Position = pos_2d
+
+    if target_dim == THREE_DIMENSIONAL:
+        ver = tuple(map(round_ver_f, ver_transformer.transform(*val_epoch)))  # only
+        if len(
+            ver
+        ) >= THREE_DIMENSIONAL and not math.isinf(  # note len(v) can be larger than three when epoch is supplied
+            ver[2]
+        ):
+            output_pos = Position3D(*pos_2d, ver[2])
+        else:
+            # height coordinate dropped
+            pass
 
     if any(
-        [math.isinf(x) for x in output]
+        [math.isinf(x) for x in output_pos]
     ):  # checks only positional coordinates, not height. since check if h isinf is already done, and dropped if isinf
         raise InfValCoordinateError("Coordinates contain inf val")
-    return output
+
+    return output_pos
 
 
 def transform_crs(
     transformer: Transformer,
     precision: int | None,
     epoch: float | None,
-    val: Position,
+    input_pos: Position,
 ) -> Position:
-    if transformer.target_crs is None:
+    if (
+        transformer.target_crs is None
+    ):  # check required for retreiving axis_info, otherwise mypy error -> transformer.target_crs: CRS | None
         raise ValueError("transformer.target_crs is None")
-    dim = len(transformer.target_crs.axis_info)
-    if dim is not None and dim != len(val) and TWO_DIMENSIONAL > dim > THREE_DIMENSIONAL:
-        # check so we can safely cast to tuple[float, float], tuple[float, float, float]
-        raise ValueError(f"dimension of target-crs should be 2 or 3, is {dim}")
+    target_dim = len(transformer.target_crs.axis_info)
 
     # TODO: fix epoch handling, should only be added in certain cases
     # when one of the src or tgt crs has a dynamic time component
     # or the transformation used has a datetime component
     # for now simple check on coords length (which is not correct)
-    input = build_input_coord(val, epoch)
+    val_epoch = build_input_coord(input_pos, epoch)
 
     # GeoJSON and CityJSON by definition has coordinates always in lon-lat-height (or x-y-z) order. Transformer has been created with `always_xy=True`,
     # to ensure input and output coordinates are in in lon-lat-height (or x-y-z) order.
     # Regarding the epoch: this is stripped from the result of the transformer. It's used as a input parameter for the transformation but is not
     # 'needed' in the result, because there is no conversion of time, e.i. an epoch value of 2010.0 will stay 2010.0 in the result. Therefor the result
     # of the transformer is 'stripped' with [0:dim]
-    _round_h = partial(_round, precision)
-    _round_v = partial(_round, HEIGHT_DIGITS_FOR_ROUNDING)
+    round_hor_f = partial(_round, precision)
+    round_ver_f = partial(_round, HEIGHT_DIGITS_FOR_ROUNDING)
 
-    _output = tuple(map(_round_h, transformer.transform(*input)[0:dim]))
+    hor_ver = tuple(map(round_hor_f, transformer.transform(*val_epoch)[0:target_dim]))
 
-    # - 1 van de twee compound
-    # -
+    pos_2d = Position2D(*hor_ver[:2])
 
-    output_2d = Position2D(*_output[:2])
-    output: Position = output_2d
-    if len(_output) >= THREE_DIMENSIONAL:
-        height = _round_v(_output[2])
+    output_pos: Position = pos_2d
+
+    if len(hor_ver) >= THREE_DIMENSIONAL:  # note len(v) can be larger than three when epoch is supplied
+        height = round_ver_f(hor_ver[2])
         if not math.isinf(height):
-            output = Position3D(*output_2d, height)
+            output_pos = Position3D(*pos_2d, height)
         else:
             # height coordinate dropped
             pass
 
-    if any([math.isinf(x) for x in output]):
+    if any([math.isinf(x) for x in output_pos]):
         raise InfValCoordinateError("Coordinates contain inf val")
-    return output
+    return output_pos
