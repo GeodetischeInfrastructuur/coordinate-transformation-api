@@ -48,14 +48,24 @@ class TransformationNotPossibleError(DataValidationError):
 
     def __init__(
         self: "TransformationNotPossibleError",
-        src_crs: str,
-        target_crs: str,
+        src_crs: ProjCrs,
+        target_crs: ProjCrs,
         reason: str = "no transformation path available",
     ) -> None:
+        self.src_crs = src_crs
+        self.target_crs = target_crs
+        self.reason = reason
+
         # Call the base class constructor with the parameters it needs
-        message = f"Transformation not possible between {src_crs} and {target_crs}, {reason}"
+        message = f"Transformation not possible between {self.src_crs_str()} and {self.target_crs_str()}, {reason}"
         super().__init__(message)
         # Now for your custom code...
+
+    def src_crs_str(self: "TransformationNotPossibleError") -> str:
+        return "{}:{}".format(*self.src_crs.to_authority())
+
+    def target_crs_str(self: "TransformationNotPossibleError") -> str:
+        return "{}:{}".format(*self.target_crs.to_authority())
 
 
 class DensityCheckFailedError(DataValidationError):
