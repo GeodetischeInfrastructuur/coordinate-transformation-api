@@ -175,7 +175,11 @@ def needs_epoch(tf: Transformer) -> bool:
 
     if tf.operations is not None:
         for operation in tf.operations:
-            if operation.type_name == "Transformation" and operation.method_code in time_coordinate_operation_methodes:
+            if (
+                operation.type_name == "Transformation" and operation.method_code in time_coordinate_operation_methodes
+            ) or (
+                operation.type_name == "Other Coordinate Operation" and "t_epoch=" in operation.to_proj4()
+            ):  # fallback voor concatenated operations
                 has_epoch = True
 
     return has_epoch
