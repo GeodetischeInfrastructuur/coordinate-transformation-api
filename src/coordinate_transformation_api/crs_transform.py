@@ -188,8 +188,8 @@ def needs_epoch(tf: Transformer) -> bool:
 def check_axis(s_crs: CRS, t_crs: CRS) -> None:
     if len(s_crs.axis_info) < len(t_crs.axis_info):
         raise TransformationNotPossibleError(
-            src_crs=str(s_crs),
-            target_crs=str(t_crs),
+            src_crs=s_crs,
+            target_crs=t_crs,
             reason=f"number of dimensions source-crs: {len(s_crs.axis_info)}, number of dimensions target-crs: {len(t_crs.axis_info)}",
         )
 
@@ -202,10 +202,7 @@ def get_transformer(source_crs: CRS, target_crs: CRS, epoch: float | None) -> Tr
     # If everything is 'right' we should always have a transformer
     # based on our configured proj.db. Therefore this error.
     if len(tfg.transformers) == 0:
-        raise TransformationNotPossibleError(
-            src_crs=str(source_crs),
-            target_crs=str(target_crs),
-        )
+        raise TransformationNotPossibleError(src_crs=source_crs, target_crs=target_crs)
 
     # When no input epoch is given we need to check that we don't perform an time-dependent transformation. Otherwise
     # the transformation would be done with a default epoch value, which isn't correct. So we need to search for the "best"
@@ -221,8 +218,8 @@ def get_transformer(source_crs: CRS, target_crs: CRS, epoch: float | None) -> Tr
     # results in wrong results. We prefer giving an exception, rather than a wrong result.
     if needs_epoch(tfg.transformers[0]) is True and epoch is None:
         raise TransformationNotPossibleError(
-            src_crs=str(source_crs),
-            target_crs=str(target_crs),
+            src_crs=source_crs,
+            target_crs=target_crs,
             reason="Transformation is not possible without an input epoch",
         )
 
@@ -292,8 +289,8 @@ def get_transform_crs_fun(
         "{}:{}".format(*target_crs.to_authority()),
     ):
         raise TransformationNotPossibleError(
-            "{}:{}".format(*source_crs.to_authority()),
-            "{}:{}".format(*target_crs.to_authority()),
+            source_crs,
+            target_crs,
             "Transformation Excluded",
         )
 
@@ -304,10 +301,13 @@ def get_transform_crs_fun(
     # These transformations need to be splitted in a horizontal and vertical transformation (vertical transformation actually attempts the 3d transformation).
     if target_crs is not None and source_crs is not target_crs and (target_crs.is_compound or source_crs.is_compound):
         target_crs_horizontal = target_crs.to_2d()
-        h_transformer = get_transformer(source_crs, target_crs_horizontal, epoch)
-        v_transformer = get_transformer(
-            source_crs, target_crs, epoch
-        )  # this will do the 3d transformation that might fail, in that case Z/H value is dropped
+        try:
+            h_transformer = get_transformer(source_crs, target_crs_horizontal, epoch)
+            v_transformer = get_transformer(
+                source_crs, target_crs, epoch
+            )  # this will do the 3d transformation that might fail, in that case Z/H value is dropped
+        except TransformationNotPossibleError as e:
+            raise TransformationNotPossibleError(source_crs, target_crs, reason=e.reason) from e
 
         # note transformers are injected in transform_compound_crs so they are instantiated only once
         _transform_compound_crs = partial(
