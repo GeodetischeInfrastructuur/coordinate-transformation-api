@@ -490,6 +490,7 @@ NSGI:Bonaire_DPnet_KADpeil:
     - EPSG:9067
     - EPSG:9286
     - EPSG:9289
+    - EPSG:9000
     - NSGI:Saba_DPnet
     - NSGI:Saba_DPnet_Height
     - NSGI:Saba2020_GEOCENTRIC
