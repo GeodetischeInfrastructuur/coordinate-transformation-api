@@ -2,9 +2,17 @@ import csv
 import itertools
 import os
 from contextlib import contextmanager
+from importlib import resources as impresources
 
 import pytest
+import yaml
 
+from coordinate_transformation_api import assets
+
+assets_resources = impresources.files(assets)
+crs_conf = assets_resources.joinpath("crs-config.yaml")
+with open(str(crs_conf)) as f:
+    CRS_CONFIG = yaml.safe_load(f)
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -52,7 +60,11 @@ def get_test_data(validation_data_filename):
     test_data = get_csv(validation_data_filename)
     crs_from_to = list(
         filter(
-            lambda x: x[0] != x[1],  # exlude transform from/to self -> epsg:28992->epsg:28992
+            lambda x: x[0] != x[1]
+            and x[1]
+            not in CRS_CONFIG[x[0]][
+                "exclude-transformations"
+            ],  # exlude transform from/to self -> epsg:28992->epsg:28992 and exlude transformations in exclude list
             itertools.product(  # make all crs from/to combinations
                 list(
                     map(  # map to extract only CRS list from test_data file

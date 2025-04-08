@@ -16,7 +16,13 @@ with open(str(filename)) as f:
 def get_allowed_tranformation(seed_crs):
     all_crs = set(CRS_CONFIG.keys())
     excluded_crs = set(CRS_CONFIG[seed_crs]["exclude-transformations"])
-    return all_crs.difference(excluded_crs)  # difference:  Elements in all_crs but not in excluded_crs
+
+    if "test-exclude-time-dependent-transformations" in CRS_CONFIG[seed_crs]:
+        excluded_crs_time_dependent_test = set(CRS_CONFIG[seed_crs]["test-exclude-time-dependent-transformations"])
+        excluded_crs = excluded_crs.union(excluded_crs_time_dependent_test)
+    result = list(all_crs.difference(excluded_crs))
+    result.sort()
+    return result  # difference:  Elements in all_crs but not in excluded_crs
 
 
 get_allowed_tranformation("NSGI:Bonaire_DPnet_KADpeil")

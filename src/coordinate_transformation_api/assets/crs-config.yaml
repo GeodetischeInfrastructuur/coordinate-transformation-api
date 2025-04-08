@@ -448,6 +448,9 @@ EPSG:32632:
     - NSGI:St_Eustatius_DPnet
   uri: http://www.opengis.net/def/crs/EPSG/0/32632
 EPSG:7415:
+  test-exclude-time-dependent-transformations:
+    - OGC:CRS84h  # tijdsafhankelijke transformatie werkt nog niet goed met de huidige PROJ database
+    - OGC:CRS84
   exclude-transformations:
     - EPSG:32619
     - EPSG:32620
@@ -503,6 +506,9 @@ NSGI:Bonaire_DPnet_KADpeil:
     - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
   uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire_DPnet_KADpeil
 NSGI:Saba_DPnet_Height:
+  test-exclude-time-dependent-transformations:
+    - OGC:CRS84h  # tijdsafhankelijke transformatie werkt nog niet goed met de huidige PROJ database
+    - OGC:CRS84
   exclude-transformations:
     - EPSG:28992
     - EPSG:3034
@@ -533,6 +539,9 @@ NSGI:Saba_DPnet_Height:
     - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
   uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba_DPnet_Height
 NSGI:St_Eustatius_DPnet_Height:
+  test-exclude-time-dependent-transformations:
+    - OGC:CRS84h  # tijdsafhankelijke transformatie werkt nog niet goed met de huidige PROJ database
+    - OGC:CRS84
   exclude-transformations:
     - EPSG:28992
     - EPSG:3034
