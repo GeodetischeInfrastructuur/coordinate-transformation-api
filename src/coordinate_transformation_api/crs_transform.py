@@ -34,6 +34,7 @@ from coordinate_transformation_api.constants import (
     TWO_DIMENSIONAL,
 )
 from coordinate_transformation_api.models import (
+    Crs,
     TransformationNotPossibleError,
 )
 from coordinate_transformation_api.types import CoordinatesType, ShapelyGeometry
@@ -284,14 +285,18 @@ def get_transform_crs_fun(
         precision = get_precision(target_crs)
 
     check_axis(source_crs, target_crs)
+    source_crs_str = "{}:{}".format(*source_crs.to_authority())
+    target_crs_str = "{}:{}".format(*target_crs.to_authority())
     if exclude_transformation(
-        "{}:{}".format(*source_crs.to_authority()),
-        "{}:{}".format(*target_crs.to_authority()),
+        source_crs_str,
+        target_crs_str,
     ):
+        allowed_transformations = Crs.from_crs_str(source_crs_str).allowed_transformations
+
         raise TransformationNotPossibleError(
             source_crs,
             target_crs,
-            "Transformation Excluded",
+            f"transformation excluded, the following target CRS are allowed for source CRS {source_crs_str}: {", ".join(allowed_transformations)} ",
         )
 
     # We need to do something special for transformation involving a Compound CRS of 2D coordinates with another height system, like NAP or a LAT height

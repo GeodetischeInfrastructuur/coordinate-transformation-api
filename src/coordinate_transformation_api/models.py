@@ -1,8 +1,17 @@
 from enum import Enum
+from importlib import resources as impresources
 
+import yaml
 from geodense.geojson import CrsFeatureCollection
 from pydantic import BaseModel, Field, computed_field
 from pyproj import CRS as ProjCrs  # noqa: N811
+
+from coordinate_transformation_api import assets
+
+assets_resources = impresources.files(assets)
+crs_conf = assets_resources.joinpath("crs-config.yaml")
+with open(str(crs_conf)) as f:
+    CRS_CONFIG = yaml.safe_load(f)
 
 
 class DataValidationError(Exception):
@@ -158,15 +167,25 @@ class Axis(BaseModel):
 
 
 class Crs(BaseModel):
+    links: dict
     crs: str
     name: str
     type_name: str
     crs_auth_identifier: str
     authority: str
     identifier: str
+    allowed_transformations: list[str]
 
     @classmethod
-    def from_crs_str(cls, crs_str: str) -> "Crs":  # noqa: ANN102
+    def get_allowed_transformations(cls, crs: str) -> list[str]:  # noqa: ANN102
+        all_crs = set(CRS_CONFIG.keys())
+        if crs not in CRS_CONFIG:
+            raise ValueError(f"Unknown CRS {crs}")
+        excluded_crs = set(CRS_CONFIG[crs]["exclude-transformations"])
+        return list(all_crs.difference(excluded_crs))  # difference:  Elements in all_crs but not in excluded_crs
+
+    @classmethod
+    def from_crs_str(cls, crs_str: str, base_url: str = "") -> "Crs":  # noqa: ANN102
         # Do some math here and later set the values
         auth, identifier = crs_str.split(":")
         pyproj_crs = ProjCrs.from_authority(auth, identifier)
@@ -182,14 +201,19 @@ class Crs(BaseModel):
             )
             for a in pyproj_crs.axis_info
         ]
+        self_link = ""
+        if base_url != "":
+            self_link = f"{base_url}/crss/{crs_str}"
         return cls(
             crs=f"https://www.opengis.net/def/crs/{auth}/0/{identifier}",
+            links={"self": self_link},
             name=pyproj_crs.name,
             type_name=pyproj_crs.type_name,
             crs_auth_identifier=pyproj_crs.srs,
             axes=axes,
             authority=auth,
             identifier=identifier,
+            allowed_transformations=Crs.get_allowed_transformations(crs_str),
         )
 
     @computed_field  # type: ignore
