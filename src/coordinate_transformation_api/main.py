@@ -81,12 +81,14 @@ CRS_LIST: list[Crs]
 OPEN_API_SPEC, API_TITLE, API_VERSION = init_oas(CRS_CONFIG)
 crs_identifiers: list[str] = OPEN_API_SPEC["components"]["schemas"]["CrsEnum"]["enum"]
 crs_header_identifiers: list[str] = OPEN_API_SPEC["components"]["schemas"]["CrsHeaderEnum"]["enum"]
-CRS_LIST = [Crs.from_crs_str(x) for x in crs_identifiers]
 BASE_DIR: str = os.path.dirname(__file__)
 logger: logging.Logger
 
 CrsEnum: enum = enum.Enum("CrsEnum", {x.replace(":", "_"): x for x in crs_identifiers})  # type: ignore
 CrsHeaderEnum: enum = enum.Enum("CrsHeaderEnum", {x.replace(":", "_"): x for x in crs_header_identifiers})  # type: ignore
+
+BASE_URL = app_settings.base_url.rstrip("/")
+CRS_LIST = [Crs.from_crs_str(x, BASE_URL) for x in crs_identifiers]
 
 
 @asynccontextmanager
@@ -200,28 +202,28 @@ async def landingpage():  # type: ignore  # noqa: ANN201
     self = Link(
         title="API Landing Page",
         rel="self",
-        href=f"{app_settings.base_url.rstrip('/')}/?f=json",
+        href=f"{BASE_URL}/?f=json",
         type="application/json",
     )
 
     oas = Link(
         title="Open API Specification as JSON",
         rel="service-desc",
-        href=f"{app_settings.base_url.rstrip('/')}/openapi?f=json",
+        href=f"{BASE_URL}/openapi?f=json",
         type="application/openapi+json",
     )
 
     oas_html = Link(
         title="Open API Specification as HTML",
         rel="service-desc",
-        href=f"{app_settings.base_url.rstrip('/')}/openapi?f=html",
+        href=f"{BASE_URL}/openapi?f=html",
         type="text/html",
     )
 
     conformance = Link(
         title="Conformance Declaration as JSON",
         rel="http://www.opengis.net/def/rel/ogc/1.0/conformance",
-        href=f"{app_settings.base_url.rstrip('/')}/conformance",
+        href=f"{BASE_URL}/conformance",
         type="application/json",
     )
     return LandingPage(
@@ -279,7 +281,7 @@ async def densify(  # noqa: ANN201
     body_d = densify_request_body(body, s_crs, max_segment_deviation, max_segment_length)
     return JSONResponse(
         content=body_d.model_dump(exclude_none=True),
-        headers=set_response_headers(("content-crs", Crs.from_crs_str(s_crs).crs)),
+        headers=set_response_headers(("content-crs", Crs.from_crs_str(s_crs, BASE_URL).crs)),
     )
 
 
@@ -315,7 +317,7 @@ async def density_check(  # noqa: ANN201
     report = DensityCheckReport.from_fc_report(failed_line_segments)
     headers = {}
     if not report.check_result:
-        headers = set_response_headers(("content-crs", Crs.from_crs_str(s_crs).crs))
+        headers = set_response_headers(("content-crs", Crs.from_crs_str(s_crs, BASE_URL).crs))
     return JSONResponse(report.model_dump(exclude_none=True), headers=headers)
 
 
