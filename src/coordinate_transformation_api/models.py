@@ -212,3 +212,18 @@ class Crs(BaseModel):
                 f"Unexpected unit of first axis (x, E, lon) of CRS {self.crs_auth_identifier} - expected values: degree, metre, actual value: {unit_name}"
             )
         return unit_name
+
+
+def get_x_unit_crs(crs: ProjCrs) -> str:
+    axe = next(
+        (x for x in crs.axis_info if x.abbrev.lower() in ["x", "e", "lon"]),
+        None,
+    )
+    if axe is None:
+        raise ValueError(f"unable to retrieve unit x axis (x, e, lon) CRS {crs.srs}")
+    unit_name = axe.unit_name
+    if unit_name not in ["degree", "metre"]:
+        raise ValueError(
+            f"Unexpected unit of first axis (x, E, lon) of CRS {crs.srs} - expected values: degree, metre, actual value: {unit_name}"
+        )
+    return unit_name
