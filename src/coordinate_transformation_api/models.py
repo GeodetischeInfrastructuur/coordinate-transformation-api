@@ -66,7 +66,7 @@ class TransformationNotPossibleError(DataValidationError):
         self.reason = reason
 
         # Call the base class constructor with the parameters it needs
-        message = f"Transformation not possible between {self.src_crs_str()} and {self.target_crs_str()}, {reason}"
+        message = f"Transformation not possible from '{src_crs.name}' ({self.src_crs_str()}) to '{target_crs.name}' ({self.target_crs_str()}), {reason}"
         super().__init__(message)
         # Now for your custom code...
 
@@ -174,15 +174,13 @@ class Crs(BaseModel):
     crs_auth_identifier: str
     authority: str
     identifier: str
-    allowed_target_crs: list[str]
+    supported_target_crss: list[str]
 
     @classmethod
-    def get_allowed_target_crs(cls, crs: str) -> list[str]:  # noqa: ANN102
-        all_crs = set(CRS_CONFIG.keys())
+    def get_supported_target_crss(cls, crs: str) -> list[str]:  # noqa: ANN102
         if crs not in CRS_CONFIG:
             raise ValueError(f"Unknown CRS {crs}")
-        excluded_crs = set(CRS_CONFIG[crs]["exclude-transformations"])
-        return list(all_crs.difference(excluded_crs))  # difference:  Elements in all_crs but not in excluded_crs
+        return list(CRS_CONFIG[crs]["supported-target-crss"])
 
     @classmethod
     def from_crs_str(cls, crs_str: str, base_url: str = "") -> "Crs":  # noqa: ANN102
@@ -213,7 +211,7 @@ class Crs(BaseModel):
             axes=axes,
             authority=auth,
             identifier=identifier,
-            allowed_target_crs=Crs.get_allowed_target_crs(crs_str),
+            supported_target_crss=Crs.get_supported_target_crss(crs_str),
         )
 
     @computed_field  # type: ignore

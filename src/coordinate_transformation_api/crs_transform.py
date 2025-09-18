@@ -287,16 +287,13 @@ def get_transform_crs_fun(
     check_axis(source_crs, target_crs)
     source_crs_str = "{}:{}".format(*source_crs.to_authority())
     target_crs_str = "{}:{}".format(*target_crs.to_authority())
-    if exclude_transformation(
-        source_crs_str,
-        target_crs_str,
-    ):
-        allowed_target_crs = Crs.from_crs_str(source_crs_str).allowed_target_crs
+    supported_target_crss = Crs.from_crs_str(source_crs_str).supported_target_crss
 
+    if target_crs_str not in supported_target_crss:
         raise TransformationNotPossibleError(
             source_crs,
             target_crs,
-            f"transformation excluded, the following target CRS are allowed for source CRS {source_crs_str}: {", ".join(allowed_target_crs)} ",
+            f"supported target CRSs for {source_crs_str} are: {", ".join(supported_target_crss)} ",
         )
 
     # We need to do something special for transformation involving a Compound CRS of 2D coordinates with another height system, like NAP or a LAT height

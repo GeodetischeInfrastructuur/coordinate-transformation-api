@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import copy
 import enum
@@ -5,6 +6,7 @@ import json
 import logging
 import os
 import pkgutil
+import re
 from collections.abc import AsyncGenerator, Callable
 from contextlib import asynccontextmanager, suppress
 from importlib import resources as impresources
@@ -272,8 +274,8 @@ async def densify(  # noqa: ANN201
     max_segment_deviation: Annotated[float | None, Query(alias="max-segment-deviation", ge=0.0001)] = None,
     max_segment_length: Annotated[float | None, Query(alias="max-segment-length", ge=200)] = 200,
 ):
-    source_crs_str: str
-    content_crs_str: str
+    source_crs_str: str | None
+    content_crs_str: str | None
 
     source_crs_str, content_crs_str = (x.value if x is not None else None for x in [source_crs, content_crs])
 
@@ -297,8 +299,8 @@ async def density_check(  # noqa: ANN201
     max_segment_deviation: Annotated[float | None, Query(alias="max-segment-deviation", ge=0.0001)] = None,
     max_segment_length: Annotated[float | None, Query(alias="max-segment-length", ge=200)] = 200,
 ):
-    source_crs_str: str
-    content_crs_str: str
+    source_crs_str: str | None
+    content_crs_str: str | None
 
     source_crs_str, content_crs_str = (x.value if x is not None else None for x in [source_crs, content_crs])
 
@@ -335,10 +337,10 @@ async def transform(  # noqa: PLR0913, ANN201
     accept: Annotated[str, Header()] = TransformGetAcceptHeaders.json.value,
 ):
     # get string values from CrsEnum|None parameters
-    source_crs_str: str
-    target_crs_str: str
-    content_crs_str: str
-    accept_crs_str: str
+    source_crs_str: str | None
+    target_crs_str: str | None
+    content_crs_str: str | None
+    accept_crs_str: str | None
     source_crs_str, target_crs_str, content_crs_str, accept_crs_str = (
         x.value if x is not None else None for x in [source_crs, target_crs, content_crs, accept_crs]
     )
@@ -400,10 +402,10 @@ async def post_transform(  # noqa: ANN201, PLR0913
     max_segment_length: Annotated[float | None, Query(alias="max-segment-length", ge=200)] = 200,
 ):
     # get string values from CrsEnum|None parameters
-    source_crs_str: str
-    target_crs_str: str
-    content_crs_str: str
-    accept_crs_str: str
+    source_crs_str: str | None
+    target_crs_str: str | None
+    content_crs_str: str | None
+    accept_crs_str: str | None
     source_crs_str, target_crs_str, content_crs_str, accept_crs_str = (
         x.value if x is not None else None for x in [source_crs, target_crs, content_crs, accept_crs]
     )
@@ -517,6 +519,39 @@ async def create_webserver(app_name: str, port: int) -> None:
     await server.serve()
 
 
+def comment_crs_config() -> None:
+    """Add comments with CRS names to the crs-config.yaml file."""
+    # Set up basic logging for this function
+    logging.basicConfig(level=logging.INFO)
+    script_logger = logging.getLogger(__name__)
+
+    assets_resources = impresources.files(assets)
+    crs_conf = assets_resources.joinpath("crs-config.yaml")
+    new_config = ""
+    with open(str(crs_conf)) as f:
+        line = f.readline()
+        while line:
+            pattern = r"((?:EPSG|NSGI|OGC):\w+):?"
+            match = re.search(pattern, line)
+            if match:
+                crs_id = match.group(1)
+                try:
+                    from pyproj import CRS
+
+                    crs = CRS.from_authority(*crs_id.split(":"))
+                    line = line.split("#")[0].rstrip()
+                    line = f"{line.replace('\n', '')}  # {crs.name}\n"
+                except Exception as exc:
+                    # If CRS lookup fails, keep the original line and log the error
+                    script_logger.warning(f"Failed to lookup CRS {crs_id}: {exc}")
+            new_config += line
+            line = f.readline()
+
+    with open(str(crs_conf), "w") as f:
+        f.writelines(new_config)
+    print(f"CRS configuration file commented: {crs_conf}")
+
+
 async def runner() -> None:
     app_name = f"{__name__}:app"
     app_probes_name = f"{__name__}:app_probes"
@@ -535,7 +570,19 @@ async def runner() -> None:
 
 
 def main() -> None:
-    asyncio.run(runner())
+    parser = argparse.ArgumentParser(description="Coordinate Transformation API")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+
+    # Add the comment-crs-config subcommand
+    subparsers.add_parser("comment-crs-config", help="Add comments with CRS names to the crs-config.yaml file")
+
+    args = parser.parse_args()
+
+    if args.command == "comment-crs-config":
+        comment_crs_config()
+    else:
+        # Default behavior: start the server
+        asyncio.run(runner())
 
 
 if __name__ == "__main__":
