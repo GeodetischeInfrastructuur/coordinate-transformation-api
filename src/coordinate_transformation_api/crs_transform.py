@@ -283,7 +283,7 @@ def get_transform_crs_fun(
     check_axis(source_crs, target_crs)
     source_crs_str = "{}:{}".format(*source_crs.to_authority())
     target_crs_str = "{}:{}".format(*target_crs.to_authority())
-    supported_target_crss = Crs.from_crs_str(source_crs_str).supported_target_crss
+    supported_target_crss = Crs.get_supported_target_crss(source_crs_str)
 
     if target_crs_str not in supported_target_crss:
         raise TransformationNotPossibleError(
