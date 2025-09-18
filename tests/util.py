@@ -62,9 +62,9 @@ def get_test_data(validation_data_filename):
         filter(
             lambda x: x[0] != x[1]
             and x[1]
-            not in CRS_CONFIG[x[0]][
-                "exclude-transformations"
-            ],  # exlude transform from/to self -> epsg:28992->epsg:28992 and exlude transformations in exclude list
+            in CRS_CONFIG[x[0]][
+                "supported-target-crss"
+            ],  # exlude transform from/to self -> epsg:28992->epsg:28992 and exlude transformations in exclude list, note x[0] src_crs, x[1] target_crs
             itertools.product(  # make all crs from/to combinations
                 list(
                     map(  # map to extract only CRS list from test_data file

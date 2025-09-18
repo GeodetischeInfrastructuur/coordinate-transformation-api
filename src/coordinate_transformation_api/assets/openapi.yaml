@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: NSGI Coordinate Transformation API
-  version: '' # replaced in code
+  version: ''  # replaced in code
   description: >
     The Coordinate Transformation API performs coordinate transformations on GeoJSON and CityJSON files using the official RDNAPTRANS™ transformation procedure and other transformations defined or recommended by NSGI.
 
@@ -20,7 +20,7 @@ info:
     - CityJSON
     - RDNAPTRANS
 servers:
-  - url: http://example.org # replaced in code
+  - url: http://example.org  # replaced in code
 tags:
   - name: About
   - name: CRS
@@ -985,22 +985,62 @@ components:
         authority:
           title: Authority
           type: string
+          example: EPSG
         axes:
           items:
             $ref: '#/components/schemas/Axis'
           title: Axes
           type: array
+          example:
+            - name: Easting
+              abbrev: X
+              direction: east
+              unit_conversion_factor: 1
+              unit_name: metre
+              unit_auth_code: EPSG
+              unit_code: '9001'
+            - name: Northing
+              abbrev: 'Y'
+              direction: north
+              unit_conversion_factor: 1
+              unit_name: metre
+              unit_auth_code: EPSG
+              unit_code: '9001'
+        crs:
+          title: Crs
+          type: string
+          example: https://www.opengis.net/def/crs/EPSG/0/28992
         crs_auth_identifier:
           $ref: '#/components/schemas/CrsEnum'
         identifier:
           title: Identifier
           type: string
+          example: "28992"
         name:
           title: Name
           type: string
+          example: "Amersfoort / RD New"
+        nr_of_dimensions:
+          title: "Number of Dimensions"
+          type: number
+          example: 2
+        supported_target_crss:
+          title: Supported Target Crss
+          type: array
+          items:
+            type: string
+          example: ["EPSG:32631", "EPSG:9000"]
         type_name:
           title: Type Name
           type: string
+          example: "Projected CRS"
+        links:
+          properties:
+            self:
+              type: string
+              title: Self
+              example: "${BASE_URL}/crss/EPSG:28992"
+          type: object
       required:
         - name
         - type_name
@@ -1010,11 +1050,11 @@ components:
       title: CRS
       type: object
     CrsEnum:
-      enum: ['EPSG:28992', 'EPSG:7415', 'EPSG:7931'] # filled in code, dummy values to suppress error by linter
+      enum: ['EPSG:28992', 'EPSG:7415', 'EPSG:7931']  # filled in code, dummy values to suppress error by linter
       example: EPSG:28992
       type: string
     CrsHeaderEnum:
-      enum: ['http://www.opengis.net/def/crs/EPSG/0/28992', 'http://www.opengis.net/def/crs/EPSG/0/7415', 'http://www.opengis.net/def/crs/EPSG/0/7931'] # filled in code, dummy values to suppress error by linter
+      enum: ['http://www.opengis.net/def/crs/EPSG/0/28992', 'http://www.opengis.net/def/crs/EPSG/0/7415', 'http://www.opengis.net/def/crs/EPSG/0/7931']  # filled in code, dummy values to suppress error by linter
       example: http://www.opengis.net/def/crs/EPSG/0/28992
       type: string
     DensityCheckReport:
