@@ -551,7 +551,7 @@ def comment_crs_config() -> None:
             line = f.readline()
 
     with open(str(crs_conf), "w") as f:
-        f.writelines(new_config)
+        f.write(new_config)
     print(f"CRS configuration file commented: {crs_conf}")
 
 
