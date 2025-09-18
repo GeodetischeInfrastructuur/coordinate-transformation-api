@@ -58,15 +58,15 @@ BBOX_3D_DIMENSION = 6
 logger = logging.getLogger(__name__)
 
 
-def validate_coords_source_crs(position: Position, source_crs, projections_axis_info: list[AvailableCrs]):
+def validate_coords_source_crs(position: Position, source_crs_id, projections_axis_info: list[AvailableCrs]):
     source_crs_dims = next(
-        crs.nr_of_dimensions for crs in projections_axis_info if source_crs == crs.crs_auth_identifier
+        crs.nr_of_dimensions for crs in projections_axis_info if source_crs_id == crs.crs_auth_identifier
     )
     if source_crs_dims != len(position):
         raise_request_validation_error(
-            "number of coordinates must match number of dimensions of source-crs",
+            f"number of input coordinates ({len(position)}) must match number of dimensions ({source_crs_dims}) of source-crs {source_crs_id}",
             loc=("query", "coordinates"),
-            input=source_crs,
+            input=position,
         )
 
 
@@ -270,6 +270,17 @@ def init_oas(crs_config) -> tuple[dict, str, str]:
         oas["components"]["schemas"]["CrsEnum"]["enum"] = available_crss
         oas["components"]["schemas"]["CrsHeaderEnum"]["enum"] = available_crss_uri
 
+        # Replace "${BASE_URL}" in Crs.links.self.example with app_settings.base_url.strip("/")
+        try:
+            example_self_link = oas["components"]["schemas"]["Crs"]["properties"]["links"]["properties"]["self"][
+                "example"
+            ]
+            if isinstance(example_self_link, str) and "${BASE_URL}" in example_self_link:
+                oas["components"]["schemas"]["Crs"]["properties"]["links"]["properties"]["self"]["example"] = (
+                    example_self_link.replace("${BASE_URL}", app_settings.base_url.strip("/"))
+                )
+        except Exception as e:
+            logger.warning(f"Could not update Crs.links.self.example: {e}")
         if app_settings.api_key_in_oas:
             api_key_header_def = {
                 "APIKeyHeader": {
@@ -352,7 +363,7 @@ def convert_point_coords_to_wkt(coords):
     return f"{geom_type}({' '.join([str(x) for x in coords])})"
 
 
-def check_crs_is_known(crs_str: str, crs_list: list[AvailableCrs]) -> None:
+def check_crs_is_known(crs_str: str | None, crs_list: list[AvailableCrs]) -> None:
     crs = next((x for x in crs_list if x.crs_auth_identifier == crs_str), None)
     if crs is None:
         raise ValueError(f"could not instantiate CRS object for CRS with id {crs_str}")
@@ -368,8 +379,8 @@ def transform_coordinates(coordinates: Position, source_crs: CRS, target_crs: CR
 
 def get_source_crs(
     body: Feature | CrsFeatureCollection | Geometry | GeometryCollection | CityjsonV113,
-    source_crs: str,
-    content_crs: str,
+    source_crs: str | None,
+    content_crs: str | None,
 ) -> str | None:
     crs_from_body = get_source_crs_body(body)
 
@@ -385,10 +396,10 @@ def get_source_crs(
 
 def post_transform_get_crss(
     body: Feature | CrsFeatureCollection | Geometry | GeometryCollection | CityjsonV113,
-    source_crs: str,
-    target_crs: str,
-    content_crs: str,
-    accept_crs: str,
+    source_crs: str | None,
+    target_crs: str | None,
+    content_crs: str | None,
+    accept_crs: str | None,
 ) -> tuple[CRS, CRS]:
     s_crs = get_source_crs(body, source_crs, content_crs)
 
@@ -436,10 +447,10 @@ def post_transform_get_crss(
 
 
 def get_transform_get_crss(
-    source_crs: str,
-    target_crs: str,
-    content_crs: str,
-    accept_crs: str,
+    source_crs: str | None,
+    target_crs: str | None,
+    content_crs: str | None,
+    accept_crs: str | None,
 ) -> tuple[CRS, CRS]:
     if source_crs is not None:
         s_crs = source_crs
@@ -469,8 +480,8 @@ def get_transform_get_crss(
 
 def get_src_crs_densify(
     body: Feature | CrsFeatureCollection | Geometry | GeometryCollection,
-    source_crs: str,
-    content_crs: str,
+    source_crs: str | None,
+    content_crs: str | None,
 ) -> str:
     s_crs = get_source_crs(body, source_crs, content_crs)
     if s_crs is None and isinstance(body, CrsFeatureCollection):

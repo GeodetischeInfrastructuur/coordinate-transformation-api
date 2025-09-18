@@ -1,4 +1,5 @@
-exclude: ["src/coordinate_transformation_api/assets/openapi.yaml"]
+exclude:
+  - "src/coordinate_transformation_api/assets/openapi.yaml"
 formatter:
   type: basic
   pad_line_comments: 2

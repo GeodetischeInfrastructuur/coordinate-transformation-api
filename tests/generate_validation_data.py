@@ -14,13 +14,13 @@ with open(str(filename)) as f:
 
 
 def get_allowed_tranformation(seed_crs):
-    all_crs = set(CRS_CONFIG.keys())
-    excluded_crs = set(CRS_CONFIG[seed_crs]["exclude-transformations"])
+    supported_target_crss = set(CRS_CONFIG[seed_crs]["supported-target-crss"])
+    result = list(supported_target_crss)
 
     if "test-exclude-time-dependent-transformations" in CRS_CONFIG[seed_crs]:
         excluded_crs_time_dependent_test = set(CRS_CONFIG[seed_crs]["test-exclude-time-dependent-transformations"])
-        excluded_crs = excluded_crs.union(excluded_crs_time_dependent_test)
-    result = list(all_crs.difference(excluded_crs))
+        result = list(supported_target_crss.difference(excluded_crs_time_dependent_test))
+
     result.sort()
     return result  # difference:  Elements in all_crs but not in excluded_crs
 
