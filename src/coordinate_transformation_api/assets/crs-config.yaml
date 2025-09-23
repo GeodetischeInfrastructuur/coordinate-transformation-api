@@ -85,12 +85,7 @@ EPSG:32619:  # WGS 84 / UTM zone 19N
     - OGC:CRS84  # CRS84
     - EPSG:4326  # WGS 84
     - EPSG:3857  # WGS 84 / Pseudo-Mercator
-    - OGC:CRS84h  # CRS84h
     - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
-    - EPSG:9000  # ITRF2014
-    - EPSG:7912  # ITRF2014
-    - EPSG:7789  # ITRF2014
-    - EPSG:4979  # WGS 84
     - EPSG:32619  # WGS 84 / UTM zone 19N
   uri: http://www.opengis.net/def/crs/EPSG/0/32619
 EPSG:32620:  # WGS 84 / UTM zone 20N
@@ -105,9 +100,6 @@ EPSG:32620:  # WGS 84 / UTM zone 20N
     - NSGI:Saba_DPnet  # Saba / Saba Dpnet
     - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
     - EPSG:9000  # ITRF2014
-    - EPSG:7912  # ITRF2014
-    - EPSG:7789  # ITRF2014
-    - EPSG:4979  # WGS 84
   uri: http://www.opengis.net/def/crs/EPSG/0/32620
 EPSG:32631:  # WGS 84 / UTM zone 31N
   supported-target-crss:
@@ -343,7 +335,6 @@ EPSG:7789:  # ITRF2014
     - EPSG:9000  # ITRF2014
     - EPSG:7912  # ITRF2014
     - EPSG:7789  # ITRF2014
-    - NSGI:Bonaire2004_GEOCENTRIC  # Bonaire 2004
     - EPSG:32620  # WGS 84 / UTM zone 20N
     - OGC:CRS84  # CRS84
     - OGC:CRS84h  # CRS84h
@@ -357,11 +348,8 @@ EPSG:7789:  # ITRF2014
     - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
     - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
     - EPSG:4979  # WGS 84
-    - EPSG:32619  # WGS 84 / UTM zone 19N
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
     - EPSG:4326  # WGS 84
     - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D  # Bonaire 2004
     - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
     - EPSG:7931  # ETRF2000
     - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
@@ -384,7 +372,6 @@ EPSG:7912:  # ITRF2014
     - EPSG:9000  # ITRF2014
     - EPSG:7912  # ITRF2014
     - EPSG:7789  # ITRF2014
-    - NSGI:Bonaire2004_GEOCENTRIC  # Bonaire 2004
     - EPSG:32620  # WGS 84 / UTM zone 20N
     - OGC:CRS84  # CRS84
     - OGC:CRS84h  # CRS84h
@@ -398,11 +385,8 @@ EPSG:7912:  # ITRF2014
     - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
     - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
     - EPSG:4979  # WGS 84
-    - EPSG:32619  # WGS 84 / UTM zone 19N
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
     - EPSG:4326  # WGS 84
     - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D  # Bonaire 2004
     - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
     - EPSG:7931  # ETRF2000
     - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
@@ -416,40 +400,23 @@ EPSG:7930:  # ETRF2000
     - EPSG:7930  # ETRF2000
     - EPSG:3857  # WGS 84 / Pseudo-Mercator
     - EPSG:9067  # ETRF2000
-    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
     - EPSG:4937  # ETRS89
-    - NSGI:Saba_DPnet_Height  # Saba / Saba DPnet + Saba height
     - EPSG:28992  # Amersfoort / RD New
-    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
     - EPSG:7415  # Amersfoort / RD New + NAP height
     - EPSG:9000  # ITRF2014
     - EPSG:7912  # ITRF2014
     - EPSG:7789  # ITRF2014
-    - NSGI:Bonaire2004_GEOCENTRIC  # Bonaire 2004
-    - EPSG:32620  # WGS 84 / UTM zone 20N
     - OGC:CRS84  # CRS84
     - OGC:CRS84h  # CRS84h
-    - NSGI:Bonaire_DPnet_KADpeil  # Bonaire / Bonaire DPnet + Bonaire KADpeil
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
-    - NSGI:St_Eustatius2020_GEOCENTRIC  # St Eustatius 2020
     - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
     - EPSG:3035  # ETRS89-extended / LAEA Europe
     - EPSG:4936  # ETRS89
     - EPSG:32631  # WGS 84 / UTM zone 31N
     - EPSG:9286  # ETRS89 + NAP height
-    - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
     - EPSG:4979  # WGS 84
-    - EPSG:32619  # WGS 84 / UTM zone 19N
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
     - EPSG:4326  # WGS 84
-    - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D  # Bonaire 2004
-    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
     - EPSG:7931  # ETRF2000
-    - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
     - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
-    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
     - EPSG:32632  # WGS 84 / UTM zone 32N
     - EPSG:4258  # ETRS89
     - EPSG:3034  # ETRS89-extended / LCC Europe
@@ -576,9 +543,6 @@ NSGI:Bonaire2004_GEOCENTRIC:  # Bonaire 2004
     - NSGI:Bonaire_DPnet_KADpeil  # Bonaire / Bonaire DPnet + Bonaire KADpeil
     - NSGI:Bonaire2004_GEOGRAPHIC_3D  # Bonaire 2004
     - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
-    - EPSG:9000  # ITRF2014
-    - EPSG:7912  # ITRF2014
-    - EPSG:7789  # ITRF2014
     - EPSG:4979  # WGS 84
     - NSGI:Bonaire2004_GEOCENTRIC  # Bonaire 2004
   uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire2004_GEOCENTRIC
@@ -590,10 +554,6 @@ NSGI:Bonaire2004_GEOGRAPHIC_2D:  # Bonaire 2004
     - EPSG:3857  # WGS 84 / Pseudo-Mercator
     - OGC:CRS84h  # CRS84h
     - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
-    - EPSG:9000  # ITRF2014
-    - EPSG:7912  # ITRF2014
-    - EPSG:7789  # ITRF2014
-    - EPSG:4979  # WGS 84
     - EPSG:32619  # WGS 84 / UTM zone 19N
   uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire2004_GEOGRAPHIC_2D
 NSGI:Bonaire2004_GEOGRAPHIC_3D:  # Bonaire 2004
@@ -607,9 +567,6 @@ NSGI:Bonaire2004_GEOGRAPHIC_3D:  # Bonaire 2004
     - NSGI:Bonaire_DPnet_KADpeil  # Bonaire / Bonaire DPnet + Bonaire KADpeil
     - NSGI:Bonaire2004_GEOGRAPHIC_3D  # Bonaire 2004
     - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
-    - EPSG:9000  # ITRF2014
-    - EPSG:7912  # ITRF2014
-    - EPSG:7789  # ITRF2014
     - EPSG:4979  # WGS 84
     - NSGI:Bonaire2004_GEOCENTRIC  # Bonaire 2004
   uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire2004_GEOGRAPHIC_3D
@@ -619,12 +576,7 @@ NSGI:Bonaire_DPnet:  # Bonaire / Bonaire DPnet
     - OGC:CRS84  # CRS84
     - EPSG:4326  # WGS 84
     - EPSG:3857  # WGS 84 / Pseudo-Mercator
-    - OGC:CRS84h  # CRS84h
     - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
-    - EPSG:9000  # ITRF2014
-    - EPSG:7912  # ITRF2014
-    - EPSG:7789  # ITRF2014
-    - EPSG:4979  # WGS 84
     - EPSG:32619  # WGS 84 / UTM zone 19N
   uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire_DPnet
 NSGI:Bonaire_DPnet_KADpeil:  # Bonaire / Bonaire DPnet + Bonaire KADpeil
@@ -638,6 +590,8 @@ NSGI:Bonaire_DPnet_KADpeil:  # Bonaire / Bonaire DPnet + Bonaire KADpeil
     - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
     - EPSG:32619  # WGS 84 / UTM zone 19N
     - NSGI:Bonaire2004_GEOCENTRIC  # Bonaire 2004
+    - OGC:CRS84h  # CRS84h
+    - EPSG:4979  # WGS 84
   uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire_DPnet_KADpeil
 NSGI:Saba2020_GEOCENTRIC:  # Saba 2020
   supported-target-crss:
