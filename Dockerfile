@@ -7,12 +7,13 @@ ARG PYTHON_VERSION
 ARG NSGI_PROJ_DB_VERSION="2.1.0"
 
 LABEL maintainer="NSGI <info@nsgi.nl>"
-
+# ignore rule to use explicit versioning for apt packages, these become unavailable overtime, breaking the build
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-    jq=1.6-2.1 \
-    curl=7.88.1-10+deb12u12 \
-    git=1:2.39.5-0+deb12u2 && \
+    jq \
+    curl \
+    git && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 ENV UV_LINK_MODE=copy \
