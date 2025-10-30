@@ -136,6 +136,24 @@ app.mount(
 
 
 @app.middleware("http")
+async def add_security_headers(request: Request, call_next: Callable) -> Response:
+    response = await call_next(request)
+
+    if request.url.path in ["/openapi", "/openapi.html"]:
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/ 'unsafe-inline'; "
+            "style-src 'self' https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/ 'unsafe-inline'; "
+            "frame-src 'self'; "
+            "img-src 'self' https://www.nsgi.nl/o/iv-kadaster-business-theme/images/favicon.ico data:; "
+            "object-src 'none'; "
+            "frame-ancestors 'self';"
+        )
+
+    return response  # type: ignore
+
+
+@app.middleware("http")
 async def add_api_version(request: Request, call_next: Callable) -> Response:
     response_body = {
         "type": "about:blank",
