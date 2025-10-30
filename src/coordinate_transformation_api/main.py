@@ -14,6 +14,7 @@ import pyproj
 import uvicorn
 from fastapi import FastAPI, Header, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
@@ -22,7 +23,6 @@ from geodense.lib import GeodenseError  # type: ignore
 from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry, GeometryCollection
 from geojson_pydantic.types import Position, Position2D, Position3D
-from starlette.responses import HTMLResponse
 
 import coordinate_transformation_api
 from coordinate_transformation_api import assets
@@ -168,25 +168,14 @@ async def add_api_version(request: Request, call_next: Callable) -> Response:
 @app.get("/openapi", include_in_schema=False)
 @app.get("/openapi.html", include_in_schema=False)
 async def openapi(request: Request, format: Annotated[str | None, Query(alias="f")] = None) -> Response:
-    if format == "html" or (accept_html(request) and format != "json"):
-        # dont use get_swagger_ui_html due to strict Content Security Policy rules on API portal
-        # these forbid the use of inline js scripts which get_swagger_ui_html use
-        html_content = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
-            <link rel="shortcut icon" href="https://www.nsgi.nl/o/iv-kadaster-business-theme/images/favicon.ico">
-            <title>NSGI Coordinate Transformation API - Swagger UI</title>
-        </head>
-        <body>
-            <div id="swagger-ui"></div>
-            <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
-            <script src="/assets/swagger-init.js"></script>
-        </body>
-        </html>
-        """
-        return HTMLResponse(content=html_content)
+    if format == "html" or (
+        accept_html(request) and format != "json"
+    ):  # return html when format=html, return json when format=json, but return html when accept header accepts html
+        return get_swagger_ui_html(
+            openapi_url="./openapi.json",
+            title=f"{API_TITLE} - Swagger UI",
+            swagger_favicon_url="https://www.nsgi.nl/o/iv-kadaster-business-theme/images/favicon.ico",
+        )
     else:  # by default return JSON
         return JSONResponse(
             content=app.openapi(),
