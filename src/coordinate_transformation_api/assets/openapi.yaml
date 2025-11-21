@@ -10,6 +10,7 @@ info:
     email: rd@kadaster.nl
     url: https://www.nsgi.nl
   termsOfService: https://creativecommons.org/licenses/by/4.0/
+  x-repositoryUrl: https://github.com/GeodetischeInfrastructuur/coordinate-transformation-api
   x-keywords:
     - geospatial
     - api

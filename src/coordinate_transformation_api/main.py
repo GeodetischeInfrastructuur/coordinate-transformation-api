@@ -218,6 +218,14 @@ async def openapi(request: Request, format: Annotated[str | None, Query(alias="f
             <link rel="icon" type="image/x-icon" href="./favicon.ico">
             <style>
             .topbar{{display:None;}}
+            .info .title small.version-stamp {{
+                background-color: #89bf04;
+            }}
+            .info hgroup.main a {{
+                font-size: 12px;
+                margin-left: 10px;
+                color: #3b4151;
+            }}
             </style>
         </head>
         <body>
@@ -234,7 +242,25 @@ async def openapi(request: Request, format: Annotated[str | None, Query(alias="f
                             SwaggerUIBundle.presets.apis,
                             SwaggerUIStandalonePreset
                         ],
-                        layout: "StandaloneLayout"
+                        layout: "StandaloneLayout",
+                        onComplete: function() {{
+                            // Add repository link to the info section
+                            fetch('./openapi.json')
+                                .then(response => response.json())
+                                .then(spec => {{
+                                    if (spec.info && spec.info['x-repositoryUrl']) {{
+                                        const titleElement = document.querySelector('.info hgroup.main a');
+                                        if (titleElement) {{
+                                            const repoLink = document.createElement('a');
+                                            repoLink.href = spec.info['x-repositoryUrl'];
+                                            repoLink.target = '_blank';
+                                            repoLink.rel = 'noopener noreferrer';
+                                            repoLink.textContent = spec.info['x-repositoryUrl'].replace("https://", "");
+                                            titleElement.parentNode.appendChild(repoLink);
+                                        }}
+                                    }}
+                                }});
+                        }}
                     }});
                 }};
             </script>
