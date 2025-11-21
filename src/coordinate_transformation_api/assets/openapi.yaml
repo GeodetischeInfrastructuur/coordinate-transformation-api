@@ -161,17 +161,17 @@ paths:
 
           GeoJSON FeatureCollection objects may contain a `.crs` member containing a named CRS, to indicate the source CRS. See the `GeoJsonCrs` schema for more details.
 
-          > **Note:** The `crs` member is not part of the [FeatureCollection schema](https://geojson.org/schema/FeatureCollection.json).
+          > **Note:** The `crs` member is not part of the [FeatureCollection schema](schemas/geojson/FeatureCollection.json).
 
           When `crs` is specified in the request body, the `source-crs` query parameter or `content-crs` request header may be omitted. Order of precedence of CRS input is: request body > query parameters > headers.
         content:
           application/json:
             schema:
               oneOf:
-                - $ref: https://geojson.org/schema/Feature.json
-                - $ref: https://geojson.org/schema/FeatureCollection.json
-                - $ref: https://geojson.org/schema/Geometry.json
-                - $ref: https://geojson.org/schema/GeometryCollection.json
+                - $ref: schemas/geojson/Feature.json
+                - $ref: schemas/geojson/FeatureCollection.json
+                - $ref: schemas/geojson/Geometry.json
+                - $ref: schemas/geojson/GeometryCollection.json
               example:
                 type: FeatureCollection
                 name: lijnen
@@ -236,17 +236,17 @@ paths:
 
           GeoJSON FeatureCollection objects may contain a `.crs` member containing a named CRS, to indicate the source CRS. See the `GeoJsonCrs` schema for more details.
 
-          > **Note:** The `crs` member is not part of the [FeatureCollection schema](https://geojson.org/schema/FeatureCollection.json).
+          > **Note:** The `crs` member is not part of the [FeatureCollection schema](schemas/geojson/FeatureCollection.json).
 
           When `crs` is specified in the request body, the `source-crs` query parameter or `content-crs` request header may be omitted. Order of precedence of CRS input is: request body > query parameters > headers.
         content:
           application/json:
             schema:
               oneOf:
-                - $ref: https://geojson.org/schema/Feature.json
-                - $ref: https://geojson.org/schema/FeatureCollection.json
-                - $ref: https://geojson.org/schema/Geometry.json
-                - $ref: https://geojson.org/schema/GeometryCollection.json
+                - $ref: schemas/geojson/Feature.json
+                - $ref: schemas/geojson/FeatureCollection.json
+                - $ref: schemas/geojson/Geometry.json
+                - $ref: schemas/geojson/GeometryCollection.json
             example:
               type: Feature
               properties:
@@ -264,7 +264,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: https://geojson.org/schema/FeatureCollection.json
+                $ref: schemas/geojson/FeatureCollection.json
               example:
                 type: FeatureCollection
                 name: lijnen
@@ -317,7 +317,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: https://geojson.org/schema/Point.json
+                $ref: schemas/geojson/Point.json
                 example:
                   type: Point
                   coordinates:
@@ -371,7 +371,7 @@ paths:
 
           GeoJSON FeatureCollection objects may contain a `.crs` member containing a named CRS, to indicate the source CRS. See the `GeoJsonCrs` schema for more details.
 
-          > **Note:** The `crs` member is not part of the [FeatureCollection schema](https://geojson.org/schema/FeatureCollection.json).
+          > **Note:** The `crs` member is not part of the [FeatureCollection schema](schemas/geojson/FeatureCollection.json).
 
           CityJSON objects may contain a [`metadata.referenceSystem`](https://www.cityjson.org/specs/1.1.3/#referencesystem-crs) member to indicate the source-crs.
 
@@ -380,10 +380,10 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: https://geojson.org/schema/Feature.json
-                - $ref: https://geojson.org/schema/FeatureCollection.json
-                - $ref: https://geojson.org/schema/Geometry.json
-                - $ref: https://geojson.org/schema/GeometryCollection.json
+                - $ref: schemas/geojson/Feature.json
+                - $ref: schemas/geojson/FeatureCollection.json
+                - $ref: schemas/geojson/Geometry.json
+                - $ref: schemas/geojson/GeometryCollection.json
             examples:
               GeoJSON:
                 value:
@@ -682,10 +682,10 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: https://geojson.org/schema/Feature.json
-                  - $ref: https://geojson.org/schema/FeatureCollection.json
-                  - $ref: https://geojson.org/schema/Geometry.json
-                  - $ref: https://geojson.org/schema/GeometryCollection.json
+                  - $ref: schemas/geojson/Feature.json
+                  - $ref: schemas/geojson/FeatureCollection.json
+                  - $ref: schemas/geojson/Geometry.json
+                  - $ref: schemas/geojson/GeometryCollection.json
               example:
                 type: Feature
                 geometry:
@@ -1045,7 +1045,7 @@ components:
           description: FeatureCollection containing line segments that failed density-check. If all line segments passed density-check, value of `failedLineSegments` is `null`.
           oneOf:
             - type: 'null' # Note the quotes around 'null'
-            - $ref: https://geojson.org/schema/FeatureCollection.json
+            - $ref: schemas/geojson/FeatureCollection.json
       type: object
     DensityCheckResultEnum:
       enum:

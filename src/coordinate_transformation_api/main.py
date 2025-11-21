@@ -13,8 +13,7 @@ import pyproj
 import uvicorn
 from fastapi import FastAPI, Header, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
 from geodense.geojson import CrsFeatureCollection
@@ -149,8 +148,8 @@ async def add_security_headers(request: Request, call_next: Callable) -> Respons
     if request.url.path in ["/openapi", "/openapi.html"]:
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
-            "script-src 'self' https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/ 'unsafe-inline'; "
-            "style-src 'self' https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/ 'unsafe-inline'; "
+            "script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline'; "
             "frame-src 'self'; "
             "img-src 'self' data:; "
             "object-src 'none'; "
@@ -196,17 +195,53 @@ async def favicon() -> FileResponse:
     return FileResponse(f"{BASE_DIR}/assets/static/favicon.ico", media_type="image/x-icon")
 
 
+@app.get("/schemas/geojson/{filename}", include_in_schema=False)
+async def geojson_schema(filename: str) -> FileResponse:
+    """Serve GeoJSON schema files."""
+    schema_path = f"{BASE_DIR}/assets/static/schemas/geojson/{filename}"
+    return FileResponse(schema_path, media_type="application/json")
+
+
 @app.get("/openapi", include_in_schema=False)
 @app.get("/openapi.html", include_in_schema=False)
 async def openapi(request: Request, format: Annotated[str | None, Query(alias="f")] = None) -> Response:
     if format == "html" or (
         accept_html(request) and format != "json"
     ):  # return html when format=html, return json when format=json, but return html when accept header accepts html
-        return get_swagger_ui_html(
-            openapi_url="./openapi.json",
-            title=f"{API_TITLE} - Swagger UI",
-            swagger_favicon_url="/favicon.ico",
-        )
+        html_content = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>{API_TITLE} - Swagger UI</title>
+            <link rel="stylesheet" type="text/css" href="./assets/swagger-ui/swagger-ui.css">
+            <link rel="icon" type="image/x-icon" href="./favicon.ico">
+            <style>
+            .topbar{{display:None;}}
+            </style>
+        </head>
+        <body>
+            <div id="swagger-ui"></div>
+            <script src="./assets/swagger-ui/swagger-ui-bundle.js"></script>
+            <script src="./assets/swagger-ui/swagger-ui-standalone-preset.js"></script>
+            <script>
+                window.onload = function() {{
+                    window.ui = SwaggerUIBundle({{
+                        url: './openapi.json',
+                        dom_id: '#swagger-ui',
+                        deepLinking: true,
+                        presets: [
+                            SwaggerUIBundle.presets.apis,
+                            SwaggerUIStandalonePreset
+                        ],
+                        layout: "StandaloneLayout"
+                    }});
+                }};
+            </script>
+        </body>
+        </html>
+        """
+        return HTMLResponse(content=html_content)
     else:  # by default return JSON
         return JSONResponse(
             content=app.openapi(),
