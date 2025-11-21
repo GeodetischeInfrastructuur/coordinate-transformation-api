@@ -195,9 +195,53 @@ async def favicon() -> FileResponse:
     return FileResponse(f"{BASE_DIR}/assets/static/favicon.ico", media_type="image/x-icon")
 
 
-@app.get("/schemas/geojson/{filename}", include_in_schema=False)
-async def geojson_schema(filename: str) -> FileResponse:
+@app.get("/schemas/geojson/{filename}", include_in_schema=False, response_model=None)
+async def geojson_schema(filename: str) -> Response:
     """Serve GeoJSON schema files."""
+    # Define allowed schema files
+    # Define allowed schema files - use a set for O(1) lookup
+    allowed_files = {
+        "feature.json",
+        "feature-collection.json",
+        "geometry.json",
+        "geometry-collection.json",
+        "point.json",
+        "line-string.json",
+        "polygon.json",
+        "multi-point.json",
+        "multi-line-string.json",
+        "multi-polygon.json",
+    }
+
+    # Sanitize filename to prevent path traversal attacks
+    # Only allow alphanumeric, hyphens, dots
+    if not filename or not filename.endswith(".json"):
+        return JSONResponse(
+            content={
+                "type": "about:blank",
+                "title": "Not Found",
+                "status": 404,
+                "detail": f"Invalid schema file '{filename}'",
+            },
+            status_code=404,
+            media_type="application/problem+json",
+        )
+
+    # Remove any path components
+    filename = os.path.basename(filename)
+
+    if filename not in allowed_files:
+        return JSONResponse(
+            content={
+                "type": "about:blank",
+                "title": "Not Found",
+                "status": 404,
+                "detail": f"Schema file '{filename}' not found",
+            },
+            status_code=404,
+            media_type="application/problem+json",
+        )
+
     schema_path = f"{BASE_DIR}/assets/static/schemas/geojson/{filename}"
     return FileResponse(schema_path, media_type="application/json")
 
