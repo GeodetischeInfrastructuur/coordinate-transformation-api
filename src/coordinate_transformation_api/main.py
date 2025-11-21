@@ -4,7 +4,6 @@ import enum
 import json
 import logging
 import os
-import pkgutil
 from collections.abc import AsyncGenerator, Callable
 from contextlib import asynccontextmanager, suppress
 from importlib import resources as impresources
@@ -15,7 +14,7 @@ import uvicorn
 from fastapi import FastAPI, Header, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
 from geodense.geojson import CrsFeatureCollection
@@ -24,8 +23,8 @@ from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry, GeometryCollection
 from geojson_pydantic.types import Position, Position2D, Position3D
 
-import coordinate_transformation_api
 from coordinate_transformation_api import assets
+from coordinate_transformation_api.access_log_middleware import AccessLogMiddleware
 from coordinate_transformation_api.cityjson.models import CityjsonV113
 from coordinate_transformation_api.constants import (
     DENSITY_CHECK_RESULT_HEADER,
@@ -40,6 +39,7 @@ from coordinate_transformation_api.limit_middleware.middleware import (
     ContentSizeLimitMiddleware,
     TimeoutMiddleware,
 )
+from coordinate_transformation_api.logging_config import get_json_logging_config
 from coordinate_transformation_api.models import (
     Conformance,
     Crs,
@@ -73,7 +73,6 @@ from coordinate_transformation_api.util import (
 )
 
 assets_resources = impresources.files(assets)
-logging_conf = assets_resources.joinpath("logging.conf")
 
 OPEN_API_SPEC: dict
 API_VERSION: str
@@ -115,6 +114,10 @@ middleware.register(app)
 app.add_middleware(ContentSizeLimitMiddleware, max_content_size=app_settings.max_size_request_body)
 app.add_middleware(TimeoutMiddleware, timeout_seconds=app_settings.request_timeout)
 
+# Add access log middleware to capture Host header and optionally X-Forwarded-For
+if app_settings.access_log:
+    app.add_middleware(AccessLogMiddleware, log_forwarded_for=app_settings.log_forwarded_for)
+
 if app_settings.cors_allow_origins:
     allow_origins: list[str]
     if app_settings.cors_allow_origins == "*":
@@ -145,7 +148,7 @@ async def add_security_headers(request: Request, call_next: Callable) -> Respons
             "script-src 'self' https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/ 'unsafe-inline'; "
             "style-src 'self' https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/ 'unsafe-inline'; "
             "frame-src 'self'; "
-            "img-src 'self' https://www.nsgi.nl/o/iv-kadaster-business-theme/images/favicon.ico data:; "
+            "img-src 'self' data:; "
             "object-src 'none'; "
             "frame-ancestors 'self';"
         )
@@ -183,6 +186,12 @@ async def add_api_version(request: Request, call_next: Callable) -> Response:
     return response
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> FileResponse:
+    """Serve favicon.ico from static assets."""
+    return FileResponse(f"{BASE_DIR}/assets/static/favicon.ico", media_type="image/x-icon")
+
+
 @app.get("/openapi", include_in_schema=False)
 @app.get("/openapi.html", include_in_schema=False)
 async def openapi(request: Request, format: Annotated[str | None, Query(alias="f")] = None) -> Response:
@@ -192,7 +201,7 @@ async def openapi(request: Request, format: Annotated[str | None, Query(alias="f
         return get_swagger_ui_html(
             openapi_url="./openapi.json",
             title=f"{API_TITLE} - Swagger UI",
-            swagger_favicon_url="https://www.nsgi.nl/o/iv-kadaster-business-theme/images/favicon.ico",
+            swagger_favicon_url="/favicon.ico",
         )
     else:  # by default return JSON
         return JSONResponse(
@@ -386,6 +395,7 @@ async def transform(  # noqa: PLR0913, ANN201
         raise_response_validation_error("Out of range float values are not JSON compliant", ["responseBody"])
 
     headers = set_response_headers(("content-crs", "{}:{}".format(*t_crs.to_authority())))
+
     if epoch is not None:
         headers = set_response_headers(("epoch", epoch), headers=headers)
 
@@ -499,21 +509,13 @@ async def post_transform(  # noqa: ANN201, PLR0913
 app.openapi = lambda: OPEN_API_SPEC  # type: ignore
 
 
-def get_logging_config() -> Any:  # noqa: ANN401
-    logging_config = uvicorn.config.LOGGING_CONFIG
-    logging_config["loggers"]["uvicorn"]["level"] = app_settings.log_level
-    logging_config["loggers"]["uvicorn.error"]["level"] = app_settings.log_level
-    logging_config["loggers"]["uvicorn.access"]["level"] = app_settings.log_level
-    package = coordinate_transformation_api
-    for _importer, modname, _ispkg in pkgutil.walk_packages(
-        path=package.__path__, prefix=f"{package.__name__}.", onerror=lambda _: None
-    ):
-        logging_config["loggers"][modname] = {
-            "handlers": ["default"],
-            "level": app_settings.log_level,
-            "propagate": False,
-        }
-    return logging_config
+def get_logging_config() -> dict[str, Any]:
+    """Get logging configuration based on app settings."""
+    return get_json_logging_config(
+        log_level=app_settings.log_level,
+        access_log_enabled=app_settings.access_log,
+        log_forwarded_for=app_settings.log_forwarded_for,
+    )
 
 
 async def create_webserver(app_name: str, port: int) -> None:
@@ -528,6 +530,7 @@ async def create_webserver(app_name: str, port: int) -> None:
         loop="uvloop",
         server_header=False,
         date_header=False,
+        use_colors=False,  # Disable colored output for JSON logging
     )
     server = uvicorn.Server(server_config)
     await server.serve()

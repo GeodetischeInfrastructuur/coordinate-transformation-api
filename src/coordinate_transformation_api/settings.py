@@ -85,6 +85,11 @@ class AppSettings(BaseSettings):
         default=False,
         description="enable access log, defaults to False",
     )
+    log_forwarded_for: bool = Field(
+        alias="LOG_FORWARDED_FOR",
+        default=False,
+        description="include X-Forwarded-For header in access logs, defaults to False",
+    )
     api_key_in_oas: bool = Field(
         alias="API_KEY_IN_OAS",
         default=False,
