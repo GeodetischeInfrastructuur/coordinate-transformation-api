@@ -18,8 +18,10 @@
         "${workspaceFolder}/.vscode/debug-logging.yaml"
       ],
       "env": {
-        "LOG_LEVEL": "DEBUG",
+        "LOG_LEVEL": "INFO",
+        "JSON_LOGS": "true",
         "DEBUG": "true",
+        "ACCESS_LOG": "true",
         "MAX_SIZE_REQUEST_BODY": "5000000",
         "CORS_ALLOW_ORIGINS": "*",
         "API_KEY_IN_OAS": "true",

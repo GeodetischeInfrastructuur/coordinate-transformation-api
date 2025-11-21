@@ -22,6 +22,30 @@ ENV UV_LINK_MODE=copy \
     UV_PYTHON=python${PYTHON_VERSION} \
     UV_PROJECT_ENVIRONMENT=/app
 
+# Download PROJ assets early to cache them
+WORKDIR /tmp/proj_assets
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN set -e && \
+    echo "Downloading nl_nsgi_nlgeo2018.tif..." && \
+    curl -fSL -o nl_nsgi_nlgeo2018.tif https://cdn.proj.org/nl_nsgi_nlgeo2018.tif && \
+    echo "Downloading nl_nsgi_rdcorr2018.tif..." && \
+    curl -fSL -o nl_nsgi_rdcorr2018.tif https://cdn.proj.org/nl_nsgi_rdcorr2018.tif && \
+    echo "Downloading nl_nsgi_rdtrans2018.tif..." && \
+    curl -fSL -o nl_nsgi_rdtrans2018.tif https://cdn.proj.org/nl_nsgi_rdtrans2018.tif && \
+    echo "Fetching GitHub release info for ${NSGI_PROJ_DB_VERSION}..." && \
+    release_url="https://api.github.com/repos/GeodetischeInfrastructuur/transformations/releases/tags/${NSGI_PROJ_DB_VERSION}" && \
+    release_json=$(curl -fSL "$release_url") && \
+    echo "Downloading bq_nsgi_bongeo2004.tif..." && \
+    asset_url=$(echo "$release_json" | jq -r '.assets[] | select(.name=="bq_nsgi_bongeo2004.tif").url') && \
+    curl -fSL -H "Accept: application/octet-stream" "$asset_url" -o bq_nsgi_bongeo2004.tif && \
+    echo "Downloading nllat2018.gtx..." && \
+    asset_url=$(echo "$release_json" | jq -r '.assets[] | select(.name=="nllat2018.gtx").url') && \
+    curl -fSL -H "Accept: application/octet-stream" "$asset_url" -o nllat2018.gtx && \
+    echo "Downloading proj.time.dependent.transformations.db..." && \
+    asset_url=$(echo "$release_json" | jq -r '.assets[] | select(.name=="proj.time.dependent.transformations.db").url') && \
+    curl -fSL -H "Accept: application/octet-stream" "$asset_url" -o proj.db && \
+    echo "All downloads completed successfully!"
+
 WORKDIR /src_app
 # split install of dependencies and application in two
 # for improved caching
@@ -33,21 +57,9 @@ COPY . /src_app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-editable
 
+# Copy downloaded PROJ assets to final location
 WORKDIR /app/lib/python${PYTHON_VERSION}/site-packages/pyproj/proj_dir/share/proj/
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-# install grid and modified proj.db with NSGI CRS definitions
-RUN curl -sL -o nl_nsgi_nlgeo2018.tif https://cdn.proj.org/nl_nsgi_nlgeo2018.tif && \
-    curl -sL -o nl_nsgi_rdcorr2018.tif https://cdn.proj.org/nl_nsgi_rdcorr2018.tif && \
-    curl -sL -o nl_nsgi_rdtrans2018.tif https://cdn.proj.org/nl_nsgi_rdtrans2018.tif && \
-    release_url="https://api.github.com/repos/GeodetischeInfrastructuur/transformations/releases/tags/${NSGI_PROJ_DB_VERSION}" && \
-    curl -sL -H "Accept: application/octet-stream" \
-    "$(curl -s "$release_url" | jq -r '.assets[] | select(.name=="bq_nsgi_bongeo2004.tif").url')" -o bq_nsgi_bongeo2004.tif && \
-    curl -sL -H "Accept: application/octet-stream" \
-    "$(curl -s "$release_url" | jq -r '.assets[] | select(.name=="nllat2018.gtx").url')" -o nllat2018.gtx && \
-    curl -sL -H "Accept: application/octet-stream" \
-    "$(curl -s "$release_url" | jq -r '.assets[] | select(.name=="proj.time.dependent.transformations.db").url')" -o proj.db
+RUN cp /tmp/proj_assets/* .
 
 FROM python:${PYTHON_VERSION}-slim-bookworm AS runner
 ARG PYTHON_VERSION
