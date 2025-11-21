@@ -90,6 +90,11 @@ class AppSettings(BaseSettings):
         default=False,
         description="include X-Forwarded-For header in access logs, defaults to False",
     )
+    client_ip_header: str | None = Field(
+        alias="CLIENT_IP_HEADER",
+        default=None,
+        description="alternative header to extract real client IP (e.g., 'X-Real-IP', 'CF-Connecting-IP', 'True-Client-IP'), defaults to X-Forwarded-For",
+    )
     api_key_in_oas: bool = Field(
         alias="API_KEY_IN_OAS",
         default=False,
