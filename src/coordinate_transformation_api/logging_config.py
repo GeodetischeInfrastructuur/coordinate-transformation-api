@@ -36,6 +36,7 @@ class AccessLogFormatter(jsonlogger.JsonFormatter):
         self: "AccessLogFormatter",
         *args: object,
         log_forwarded_for: bool = False,
+        client_ip_header: str | None = None,
         use_colors: bool = False,  # noqa: ARG002
         **kwargs: object,
     ) -> None:
@@ -44,6 +45,7 @@ class AccessLogFormatter(jsonlogger.JsonFormatter):
         kwargs.pop("use_colors", None)
         super().__init__(*args, **kwargs)  # type: ignore[arg-type]
         self.log_forwarded_for = log_forwarded_for
+        self.client_ip_header = client_ip_header
 
     def add_fields(
         self: "AccessLogFormatter", log_record: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
@@ -74,7 +76,20 @@ class AccessLogFormatter(jsonlogger.JsonFormatter):
 
         # Add X-Forwarded-For if configured and available
         if self.log_forwarded_for and hasattr(record, "x_forwarded_for"):
-            log_record["x_forwarded_for"] = record.x_forwarded_for
+            x_forwarded_for = record.x_forwarded_for
+            log_record["x_forwarded_for"] = x_forwarded_for
+            # Extract real client IP (first IP in X-Forwarded-For chain)
+            # Format: "client, proxy1, proxy2, ..."
+            first_ip = x_forwarded_for.split(",")[0].strip()
+            if first_ip:
+                log_record["real_client_ip"] = first_ip
+
+        # Add alternative client IP header if configured
+        if self.client_ip_header and hasattr(record, "client_ip_value"):
+            client_ip_value = record.client_ip_value
+            log_record[self.client_ip_header.lower().replace("-", "_")] = client_ip_value
+            # Use this as the real client IP
+            log_record["real_client_ip"] = client_ip_value.strip()
 
         # Add Host header if available
         if hasattr(record, "host"):
@@ -89,7 +104,10 @@ class AccessLogFormatter(jsonlogger.JsonFormatter):
 
 
 def get_json_logging_config(
-    log_level: str, access_log_enabled: bool = False, log_forwarded_for: bool = False
+    log_level: str,
+    access_log_enabled: bool = False,
+    log_forwarded_for: bool = False,
+    client_ip_header: str | None = None,
 ) -> dict[str, Any]:
     """
     Get uvicorn logging configuration with JSON formatting.
@@ -98,6 +116,7 @@ def get_json_logging_config(
         log_level: Logging level (DEBUG, INFO, WARNING, ERROR)
         access_log_enabled: Whether to enable access logs
         log_forwarded_for: Whether to include X-Forwarded-For header in logs
+        client_ip_header: Alternative header to extract real client IP
 
     Returns:
         Dictionary with logging configuration for uvicorn
@@ -109,6 +128,7 @@ def get_json_logging_config(
             "request_metadata": {
                 "()": "coordinate_transformation_api.access_log_middleware.RequestMetadataFilter",
                 "log_forwarded_for": log_forwarded_for,
+                "client_ip_header": client_ip_header,
             },
         },
         "formatters": {
@@ -121,6 +141,7 @@ def get_json_logging_config(
             "access": {
                 "()": "coordinate_transformation_api.logging_config.AccessLogFormatter",
                 "log_forwarded_for": log_forwarded_for,
+                "client_ip_header": client_ip_header,
             },
         },
         "handlers": {
