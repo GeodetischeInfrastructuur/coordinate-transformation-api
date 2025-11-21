@@ -51,11 +51,12 @@ docker logs container-name
 
 Logging is configured through environment variables:
 
-| Environment Variable | Type    | Default | Description                                                                            |
-| -------------------- | ------- | ------- | -------------------------------------------------------------------------------------- |
-| `LOG_LEVEL`          | string  | `INFO`  | Logging level: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`                         |
-| `ACCESS_LOG`         | boolean | `false` | Enable HTTP access logging                                                             |
-| `LOG_FORWARDED_FOR`  | boolean | `false` | Include `X-Forwarded-For` header in access logs (useful behind proxies/load balancers) |
+| Environment Variable | Type    | Default | Description                                                                                                                                                                             |
+| -------------------- | ------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LOG_LEVEL`          | string  | `INFO`  | Logging level: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`                                                                                                                          |
+| `ACCESS_LOG`         | boolean | `false` | Enable HTTP access logging                                                                                                                                                              |
+| `LOG_FORWARDED_FOR`  | boolean | `false` | Include `X-Forwarded-For` header in access logs (useful behind proxies/load balancers)                                                                                                  |
+| `CLIENT_IP_HEADER`   | string  | `null`  | Alternative header for real client IP (e.g., `X-Real-IP`, `CF-Connecting-IP`, `True-Client-IP`). When set, this takes precedence over `X-Forwarded-For` for extracting `real_client_ip` |
 
 ### Example Configuration
 
@@ -69,6 +70,11 @@ export LOG_FORWARDED_FOR=false
 export LOG_LEVEL=INFO
 export ACCESS_LOG=true
 export LOG_FORWARDED_FOR=true
+
+# Behind proxy with alternative client IP header
+export LOG_LEVEL=INFO
+export ACCESS_LOG=true
+export CLIENT_IP_HEADER=X-Real-IP  # or CF-Connecting-IP, True-Client-IP, etc.
 ```
 
 ## Log Format
@@ -112,7 +118,8 @@ When `ACCESS_LOG=true`, HTTP requests are logged with:
   "http_version": "HTTP/1.1",
   "status_code": 200,
   "host": "api.example.com",
-  "x_forwarded_for": "203.0.113.42",
+  "x_forwarded_for": "203.0.113.42, 10.0.0.1",
+  "real_client_ip": "203.0.113.42",
   "response_time_ms": 45.23
 }
 ```
@@ -122,14 +129,44 @@ When `ACCESS_LOG=true`, HTTP requests are logged with:
 - `timestamp`: ISO 8601 formatted UTC timestamp
 - `logger`: Always `uvicorn.access`
 - `level`: Always `INFO`
-- `client_ip`: Direct client IP address (from connection)
+- `client_ip`: Direct client IP address from TCP connection (usually proxy/load balancer IP)
 - `method`: HTTP method (GET, POST, etc.)
 - `path`: Request path with query string
 - `http_version`: HTTP protocol version
 - `status_code`: HTTP response status code
 - `host`: Value from `Host` header
 - `x_forwarded_for`: Value from `X-Forwarded-For` header (only when `LOG_FORWARDED_FOR=true`)
+- `real_client_ip`: Real client IP extracted from `X-Forwarded-For` (first IP) or from `CLIENT_IP_HEADER` if configured
 - `response_time_ms`: Request processing time in milliseconds
+- `x_real_ip`, `cf_connecting_ip`, `true_client_ip`: Alternative IP headers (when `CLIENT_IP_HEADER` is set)
+
+## Understanding Client IP Fields
+
+**`client_ip`**: The direct TCP connection IP, which is typically your proxy/load balancer's internal IP when behind a
+reverse proxy.
+
+**`real_client_ip`**: The actual end-user's IP address, extracted from:
+
+1. **`CLIENT_IP_HEADER`** (if configured) - Takes precedence. Use this when your proxy sets a specific header like
+   `X-Real-IP`.
+2. **`X-Forwarded-For`** (if `LOG_FORWARDED_FOR=true`) - Extracts the first (leftmost) IP from the comma-separated list.
+
+**Common proxy headers** (set via `CLIENT_IP_HEADER`):
+
+- `X-Real-IP` - Used by nginx and other proxies
+- `CF-Connecting-IP` - Cloudflare's client IP
+- `True-Client-IP` - Akamai and some CDNs
+- `X-Forwarded-For` - Standard proxy header (comma-separated list)
+
+**Example with proxy chain**:
+
+```json
+{
+  "client_ip": "172.16.4.35",           // Internal proxy IP
+  "x_forwarded_for": "92.254.23.143, 145.77.224.204",  // Client + proxies
+  "real_client_ip": "92.254.23.143"     // Extracted client IP
+}
+```
 
 ## Implementation Details
 
@@ -221,6 +258,37 @@ Enable forwarded header logging:
 ```bash
 export LOG_FORWARDED_FOR=true
 ```
+
+### Real client IP not showing or incorrect
+
+If `real_client_ip` is missing or showing proxy IPs instead of your actual client IP:
+
+**Problem**: Your IP is not in the `X-Forwarded-For` header, or the header contains only internal proxy IPs.
+
+**Solution**: Configure your edge proxy/load balancer to include the original client IP:
+
+- **nginx**: `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`
+- **HAProxy**: `option forwardfor`
+- **AWS ALB/ELB**: Automatic (check ALB is configured correctly)
+- **Azure Application Gateway**: Enable in backend settings
+- **Cloudflare**: Use `CF-Connecting-IP` header instead
+
+If your proxy uses a different header (like `X-Real-IP`, `CF-Connecting-IP`, `True-Client-IP`):
+
+```bash
+export CLIENT_IP_HEADER=X-Real-IP  # or CF-Connecting-IP, True-Client-IP
+export LOG_FORWARDED_FOR=false      # Optional: disable X-Forwarded-For if not needed
+export ACCESS_LOG=true
+```
+
+**Verify** which headers your proxy is sending:
+
+```bash
+# Add this temporarily to see all headers
+curl -v https://your-api.com/endpoint
+```
+
+Or check existing logs for available headers.
 
 ### Host header showing as empty
 

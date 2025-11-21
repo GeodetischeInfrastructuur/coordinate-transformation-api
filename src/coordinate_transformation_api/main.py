@@ -116,7 +116,11 @@ app.add_middleware(TimeoutMiddleware, timeout_seconds=app_settings.request_timeo
 
 # Add access log middleware to capture Host header and optionally X-Forwarded-For
 if app_settings.access_log:
-    app.add_middleware(AccessLogMiddleware, log_forwarded_for=app_settings.log_forwarded_for)
+    app.add_middleware(
+        AccessLogMiddleware,
+        log_forwarded_for=app_settings.log_forwarded_for,
+        client_ip_header=app_settings.client_ip_header,
+    )
 
 if app_settings.cors_allow_origins:
     allow_origins: list[str]
@@ -515,6 +519,7 @@ def get_logging_config() -> dict[str, Any]:
         log_level=app_settings.log_level,
         access_log_enabled=app_settings.access_log,
         log_forwarded_for=app_settings.log_forwarded_for,
+        client_ip_header=app_settings.client_ip_header,
     )
 
 

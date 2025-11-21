@@ -15,9 +15,12 @@ _request_data = threading.local()
 class RequestMetadataFilter(logging.Filter):
     """Logging filter that adds request metadata from thread-local storage."""
 
-    def __init__(self: "RequestMetadataFilter", log_forwarded_for: bool = False) -> None:
+    def __init__(
+        self: "RequestMetadataFilter", log_forwarded_for: bool = False, client_ip_header: str | None = None
+    ) -> None:
         super().__init__()
         self.log_forwarded_for = log_forwarded_for
+        self.client_ip_header = client_ip_header
 
     def filter(self: "RequestMetadataFilter", record: logging.LogRecord) -> bool:
         """Add request metadata to log record."""
@@ -32,6 +35,12 @@ class RequestMetadataFilter(logging.Filter):
             if x_forwarded_for is not None:
                 record.x_forwarded_for = x_forwarded_for  # type: ignore[attr-defined]
 
+        # Get alternative client IP header if configured
+        if self.client_ip_header:
+            client_ip_value = getattr(_request_data, "client_ip_value", None)
+            if client_ip_value is not None:
+                record.client_ip_value = client_ip_value  # type: ignore[attr-defined]
+
         # Get response time if available
         response_time = getattr(_request_data, "response_time", None)
         if response_time is not None:
@@ -43,9 +52,15 @@ class RequestMetadataFilter(logging.Filter):
 class AccessLogMiddleware(BaseHTTPMiddleware):
     """Middleware to add request metadata (Host, X-Forwarded-For, response time) to access logs."""
 
-    def __init__(self: "AccessLogMiddleware", app: object, log_forwarded_for: bool = False) -> None:
+    def __init__(
+        self: "AccessLogMiddleware",
+        app: object,
+        log_forwarded_for: bool = False,
+        client_ip_header: str | None = None,
+    ) -> None:
         super().__init__(app)  # type: ignore[arg-type]
         self.log_forwarded_for = log_forwarded_for
+        self.client_ip_header = client_ip_header
 
     async def dispatch(
         self: "AccessLogMiddleware", request: Request, call_next: Callable[[Request], Awaitable[Response]]
@@ -64,6 +79,12 @@ class AccessLogMiddleware(BaseHTTPMiddleware):
             x_forwarded_for = request.headers.get("X-Forwarded-For")
             if x_forwarded_for:
                 _request_data.x_forwarded_for = x_forwarded_for
+
+        # Store alternative client IP header if configured
+        if self.client_ip_header:
+            client_ip_value = request.headers.get(self.client_ip_header)
+            if client_ip_value:
+                _request_data.client_ip_value = client_ip_value
 
         response = await call_next(request)
 
