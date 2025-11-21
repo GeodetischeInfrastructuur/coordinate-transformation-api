@@ -66,7 +66,7 @@ def validate_coords_source_crs(position: Position, source_crs, projections_axis_
         raise_request_validation_error(
             "number of coordinates must match number of dimensions of source-crs",
             loc=("query", "coordinates"),
-            input=source_crs,
+            input=source_crs.to_string(),
         )
 
 
@@ -435,7 +435,7 @@ def post_transform_get_crss(
     return CRS.from_authority(*s_authority_code), CRS.from_authority(*t_authority_code)
 
 
-def get_transform_get_crss(
+def get_pyproj_crss(
     source_crs: str,
     target_crs: str,
     content_crs: str,
