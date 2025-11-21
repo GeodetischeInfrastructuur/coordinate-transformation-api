@@ -59,8 +59,8 @@ from coordinate_transformation_api.util import (
     crs_transform,
     densify_request_body,
     density_check_request_body,
+    get_pyproj_crss,
     get_src_crs_densify,
-    get_transform_get_crss,
     init_oas,
     post_transform_get_crss,
     raise_request_validation_error,
@@ -413,6 +413,7 @@ async def densify(  # noqa: ANN201
 
     s_crs = get_src_crs_densify(body, source_crs_str, content_crs_str)
     body_d = densify_request_body(body, s_crs, max_segment_deviation, max_segment_length)
+
     return JSONResponse(
         content=body_d.model_dump(exclude_none=True),
         headers=set_response_headers(("content-crs", Crs.from_crs_str(s_crs).crs)),
@@ -482,7 +483,7 @@ async def transform(  # noqa: PLR0913, ANN201
         CRS_LIST,
     )
 
-    s_crs, t_crs = get_transform_get_crss(source_crs_str, target_crs_str, content_crs_str, accept_crs_str)
+    s_crs, t_crs = get_pyproj_crss(source_crs_str, target_crs_str, content_crs_str, accept_crs_str)
 
     _coords_list = list(map(lambda x: float(x), coordinates.split(",")))
 
@@ -503,7 +504,7 @@ async def transform(  # noqa: PLR0913, ANN201
     if float("inf") in [abs(x) for x in position_t]:
         raise_response_validation_error("Out of range float values are not JSON compliant", ["responseBody"])
 
-    headers = set_response_headers(("content-crs", "{}:{}".format(*t_crs.to_authority())))
+    headers = set_response_headers(("content-crs", Crs.from_crs_str(t_crs.to_string()).crs))
 
     if epoch is not None:
         headers = set_response_headers(("epoch", epoch), headers=headers)
@@ -602,7 +603,7 @@ async def post_transform(  # noqa: ANN201, PLR0913
         # TODO: implement response header to indicate dropped geometries due to inf values in transformed coordinates
 
         response_headers = set_response_headers(
-            ("content-crs", "{}:{}".format(*t_crs.to_authority())),
+            ("content-crs", Crs.from_crs_str(t_crs.to_string()).crs),
             headers=response_headers,
         )
         if epoch is not None:
