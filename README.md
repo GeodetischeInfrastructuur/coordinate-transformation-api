@@ -112,6 +112,17 @@ proj_data_dir=$(python3 -c 'import pyproj;print(pyproj.datadir.get_data_dir());'
 > :warning: For 'default' usage, like QGIS, use the proj.db. The coordinate transformation API it self uses the
 > proj.time.dependent.transformations.db for specific time dependent transformations.
 
+### Update Swagger UI JS/CSS dep
+
+```sh
+cd src/coordinate_transformation_api/assets/static
+mkdir -p swagger-ui
+cd swagger-ui
+curl -L https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js -o swagger-ui-bundle.js
+curl -L https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css -o swagger-ui.css
+curl -L https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-standalone-preset.js -o swagger-ui-standalone-preset.js
+```
+
 ## Docker
 
 ### Build container
