@@ -49,6 +49,26 @@ class RequestMetadataFilter(logging.Filter):
         return True
 
 
+class HealthCheckFilter(logging.Filter):
+    """Logging filter that excludes health check endpoints from access logs."""
+
+    def filter(self: "HealthCheckFilter", record: logging.LogRecord) -> bool:
+        """Filter out liveness and readiness endpoint requests."""
+        # Check if the log message contains health check endpoints
+        if hasattr(record, "args") and record.args:
+            try:
+                # uvicorn access logs have the path as the second argument
+                args = tuple(record.args) if not isinstance(record.args, tuple) else record.args
+                if len(args) >= 2:  # noqa: PLR2004
+                    path = str(args[2])
+                    # Filter out liveness and readiness checks
+                    if path in ["/liveness", "/readiness"]:
+                        return False
+            except (IndexError, AttributeError, TypeError):
+                pass
+        return True
+
+
 class AccessLogMiddleware(BaseHTTPMiddleware):
     """Middleware to add request metadata (Host, X-Forwarded-For, response time) to access logs."""
 

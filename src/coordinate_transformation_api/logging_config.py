@@ -130,6 +130,9 @@ def get_json_logging_config(
                 "log_forwarded_for": log_forwarded_for,
                 "client_ip_header": client_ip_header,
             },
+            "health_check": {
+                "()": "coordinate_transformation_api.access_log_middleware.HealthCheckFilter",
+            },
         },
         "formatters": {
             "default": {
@@ -162,7 +165,7 @@ def get_json_logging_config(
                 "level": log_level,
                 "formatter": "access",
                 "stream": "ext://sys.stdout",
-                "filters": ["request_metadata"],
+                "filters": ["health_check", "request_metadata"],
             },
         },
         "loggers": {
