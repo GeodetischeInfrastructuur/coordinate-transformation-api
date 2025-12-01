@@ -34,6 +34,7 @@ from coordinate_transformation_api.constants import (
     TWO_DIMENSIONAL,
 )
 from coordinate_transformation_api.models import (
+    Crs,
     TransformationNotPossibleError,
 )
 from coordinate_transformation_api.types import CoordinatesType, ShapelyGeometry
@@ -144,10 +145,6 @@ def get_bbox_from_coordinates(coordinates: Any) -> BBox:  # noqa: ANN401
         return min(x), min(y), min(z), max(x), max(y), max(z)
     else:
         raise ValueError(f"expected dimension of coordinates is either 2 or 3, got {len(coordinate_tuples)}")
-
-
-def exclude_transformation(source_crs_str: str, target_crs_str: str) -> bool:
-    return source_crs_str in CRS_CONFIG and (target_crs_str in CRS_CONFIG[source_crs_str]["exclude-transformations"])
 
 
 def needs_epoch(tf: Transformer) -> bool:
@@ -284,14 +281,15 @@ def get_transform_crs_fun(
         precision = get_precision(target_crs)
 
     check_axis(source_crs, target_crs)
-    if exclude_transformation(
-        "{}:{}".format(*source_crs.to_authority()),
-        "{}:{}".format(*target_crs.to_authority()),
-    ):
+    source_crs_str = "{}:{}".format(*source_crs.to_authority())
+    target_crs_str = "{}:{}".format(*target_crs.to_authority())
+    supported_target_crss = Crs.get_supported_target_crss(source_crs_str)
+
+    if target_crs_str not in supported_target_crss:
         raise TransformationNotPossibleError(
             source_crs,
             target_crs,
-            "Transformation Excluded",
+            f"supported target CRSs for {source_crs_str} are: {", ".join(supported_target_crss)} ",
         )
 
     # We need to do something special for transformation involving a Compound CRS of 2D coordinates with another height system, like NAP or a LAT height

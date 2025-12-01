@@ -23,10 +23,10 @@ jobs:
         uses: astral-sh/setup-uv@v3
         with:
           # Install a specific version of uv.
-          version: "0.4.19"
+          version: "0.9.13"
       - name: Install dependencies
         run: |
-          uv sync
+          uv sync --dev
       - name: Set env PATH
         run: echo "PATH="$(pwd)/.venv/bin:$PATH"" >> $GITHUB_ENV
       - name: Set env PROJ_DIR

@@ -10,18 +10,32 @@ classifiers = [
 ]
 readme = { file = "./README.md", content-type = "text/markdown" }
 dependencies = [
-    "fastapi[all] == 0.117.1",
-    "uvicorn == 0.37.0",
+    "fastapi[all] == 0.121.3",
+    "uvicorn == 0.38.0",
     "pyyaml == 6.0.3",
     "geojson_pydantic == 1.2.0",
     "pyproj ~= 3.7.0",
-    "pydantic-settings == 2.11.0",
+    "pydantic-settings == 2.12.0",
     "email-validator == 2.3.0",
     "geodense ~= 2.0.2",
     "python-json-logger>=4.0.0",
 ]
 requires-python = ">=3.12"
 dynamic = ["version"]
+
+[dependency-groups]
+dev = [
+    "pre-commit~=4.3.0",
+    "yamllint~=1.37.1",
+    "coverage ~= 7.10.6",
+    "mypy ~= 1.18.2",
+    "pytest ~= 8.4.2",
+    "ruff ~= 0.13.1",
+    "types-ujson ~= 5.10.0.20250822",
+    "types-PyYAML ~= 6.0.12.20250915",
+    "pytest-asyncio ~= 1.2.0",
+    "types-shapely~=2.1.0.20250917",
+]
 
 
 [build-system]
@@ -91,8 +105,10 @@ select = [
     "Q",
     "ANN",
 ]
-# Avoid enforcing line-length violations (`E501`) - fixed by Black
-ignore = ["E501"]
+# Avoid enforcing:
+# - line-length violations (`E501`) - fixed by Black
+# - ANN102 Missing type annotation for cls in classmethod
+ignore = ["E501", "ANN102"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
@@ -129,23 +145,6 @@ unfixable = []
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
-
-
-[tool.uv]
-dev-dependencies = [
-    "pre-commit>=4.0.0",
-    "ruff>=0.6.4",
-    "yamllint>=1.35.1",
-    "coverage == 7.6.1",
-    "mypy == 1.11.2",
-    "pytest == 8.3.2",
-    "ruff == 0.6.4",
-    "types-ujson == 5.10.0.20240515",
-    "types-PyYAML == 6.0.12.20240808",
-    "pytest-asyncio == 0.24.0",
-    "types-shapely>=2.0.0.20240820",
-]
-
 
 [tool.mypy]
 plugins = "pydantic.mypy"

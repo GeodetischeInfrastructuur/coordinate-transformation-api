@@ -28,7 +28,7 @@
         "EXAMPLE_API_KEY": "FOOBAR"
       },
       "jinja": true,
-      "justMyCode": false
+      "justMyCode": true
     },
     {
       "name": "Python: Debug Tests",

@@ -1,1077 +1,823 @@
-EPSG:28992:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
+# file commented with `comment-crs-config command in main.py
+EPSG:28992:  # Amersfoort / RD New
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
   uri: http://www.opengis.net/def/crs/EPSG/0/28992
-EPSG:9286:
-  exclude-transformations:
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/9286
-EPSG:9289:
-  exclude-transformations:
-    - EPSG:4979
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:7930
-    - EPSG:7931
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/9289
-EPSG:3043:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/3043
-EPSG:3044:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/3044
-EPSG:3034:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
+EPSG:3034:  # ETRS89-extended / LCC Europe
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
   uri: http://www.opengis.net/def/crs/EPSG/0/3034
-EPSG:3035:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
+EPSG:3035:  # ETRS89-extended / LAEA Europe
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
   uri: http://www.opengis.net/def/crs/EPSG/0/3035
-NSGI:Bonaire_DPnet:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32620
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire_DPnet
-NSGI:Saba_DPnet:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba_DPnet
-NSGI:St_Eustatius_DPnet:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius_DPnet
-EPSG:3857:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.opengis.net/def/crs/EPSG/0/3857
-EPSG:32619:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32620
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
+EPSG:3043:  # ETRS89 / UTM zone 31N (N-E)
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/3043
+EPSG:3044:  # ETRS89 / UTM zone 32N (N-E)
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/3044
+EPSG:32619:  # WGS 84 / UTM zone 19N
+  supported-target-crss:
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:32619  # WGS 84 / UTM zone 19N
   uri: http://www.opengis.net/def/crs/EPSG/0/32619
-EPSG:32620:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
+EPSG:32620:  # WGS 84 / UTM zone 20N
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - EPSG:9000  # ITRF2014
   uri: http://www.opengis.net/def/crs/EPSG/0/32620
-EPSG:32631:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
+EPSG:32631:  # WGS 84 / UTM zone 31N
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
   uri: http://www.opengis.net/def/crs/EPSG/0/32631
-EPSG:32632:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
+EPSG:32632:  # WGS 84 / UTM zone 32N
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
   uri: http://www.opengis.net/def/crs/EPSG/0/32632
-EPSG:7415:
-  test-exclude-time-dependent-transformations:
-    - OGC:CRS84h  # tijdsafhankelijke transformatie werkt nog niet goed met de huidige PROJ database
-    - OGC:CRS84
-  exclude-transformations:
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/7415
-NSGI:Bonaire_DPnet_KADpeil:
-  exclude-transformations:
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32620
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:9000
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire_DPnet_KADpeil
-NSGI:Saba_DPnet_Height:
-  test-exclude-time-dependent-transformations:
-    - OGC:CRS84h  # tijdsafhankelijke transformatie werkt nog niet goed met de huidige PROJ database
-    - OGC:CRS84
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba_DPnet_Height
-NSGI:St_Eustatius_DPnet_Height:
-  test-exclude-time-dependent-transformations:
-    - OGC:CRS84h  # tijdsafhankelijke transformatie werkt nog niet goed met de huidige PROJ database
-    - OGC:CRS84
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius_DPnet_Height
-EPSG:9067:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/9067
-EPSG:4258:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
+EPSG:3857:  # WGS 84 / Pseudo-Mercator
+  supported-target-crss:
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - EPSG:28992  # Amersfoort / RD New
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - EPSG:9000  # ITRF2014
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - EPSG:4326  # WGS 84
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/3857
+EPSG:4258:  # ETRS89
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
   uri: http://www.opengis.net/def/crs/EPSG/0/4258
-NSGI:Bonaire2004_GEOGRAPHIC_2D:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32620
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire2004_GEOGRAPHIC_2D
-NSGI:Saba2020_GEOGRAPHIC_2D:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba2020_GEOGRAPHIC_2D
-NSGI:St_Eustatius2020_GEOGRAPHIC_2D:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius2020_GEOGRAPHIC_2D
-EPSG:9000:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/9000
-EPSG:4326:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
+EPSG:4326:  # WGS 84
+  supported-target-crss:
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - EPSG:28992  # Amersfoort / RD New
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - EPSG:9000  # ITRF2014
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - EPSG:4326  # WGS 84
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
   uri: http://www.opengis.net/def/crs/EPSG/0/4326
-OGC:CRS84:
-  exclude-transformations:
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:9286
-    - EPSG:9289
-    - EPSG:7789
-    - EPSG:7912
-    - EPSG:4979
-    - OGC:CRS84h
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.opengis.net/def/crs/OGC/0/CRS84
-EPSG:7931:
-  exclude-transformations:
-    - EPSG:9289
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/7931
-EPSG:4937:
-  exclude-transformations:
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/4937
-NSGI:Bonaire2004_GEOGRAPHIC_3D:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32620
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire2004_GEOGRAPHIC_3D
-NSGI:Saba2020_GEOGRAPHIC_3D:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba2020_GEOGRAPHIC_3D
-NSGI:St_Eustatius2020_GEOGRAPHIC_3D:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius2020_GEOGRAPHIC_3D
-EPSG:7912:
-  exclude-transformations:
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire_DPnet
-  uri: http://www.opengis.net/def/crs/EPSG/0/7912
-EPSG:4979:
-  exclude-transformations:
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-  uri: http://www.opengis.net/def/crs/EPSG/0/4979
-OGC:CRS84h:
-  exclude-transformations:
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-  uri: http://www.opengis.net/def/crs/OGC/0/CRS84h
-EPSG:7930:
-  exclude-transformations:
-    - EPSG:9289
-  uri: http://www.opengis.net/def/crs/EPSG/0/7930
-EPSG:4936:
-  exclude-transformations:
-    - EPSG:32619
-    - EPSG:32620
-    - NSGI:Saba_DPnet_Height
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:Bonaire_DPnet
-    - NSGI:Saba_DPnet
-    - NSGI:St_Eustatius_DPnet
+EPSG:4936:  # ETRS89
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:4937  # ETRS89
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - EPSG:4979  # WGS 84
+    - EPSG:4326  # WGS 84
+    - EPSG:7931  # ETRF2000
+    - EPSG:9289  # ETRS89 + LAT NL depth
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
   uri: http://www.opengis.net/def/crs/EPSG/0/4936
-NSGI:Bonaire2004_GEOCENTRIC:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32620
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire2004_GEOCENTRIC
-NSGI:Saba2020_GEOCENTRIC:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:St_Eustatius_DPnet
-    - NSGI:St_Eustatius_DPnet_Height
-    - NSGI:St_Eustatius2020_GEOCENTRIC
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D
-    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba2020_GEOCENTRIC
-NSGI:St_Eustatius2020_GEOCENTRIC:
-  exclude-transformations:
-    - EPSG:28992
-    - EPSG:3034
-    - EPSG:3035
-    - EPSG:3043
-    - EPSG:3044
-    - EPSG:32619
-    - EPSG:32631
-    - EPSG:32632
-    - EPSG:4258
-    - EPSG:4936
-    - EPSG:4937
-    - EPSG:7415
-    - EPSG:7930
-    - EPSG:7931
-    - EPSG:9067
-    - EPSG:9286
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire2004_GEOCENTRIC
-    - NSGI:Bonaire2004_GEOGRAPHIC_2D
-    - NSGI:Bonaire2004_GEOGRAPHIC_3D
-    - NSGI:Saba_DPnet
-    - NSGI:Saba_DPnet_Height
-    - NSGI:Saba2020_GEOCENTRIC
-    - NSGI:Saba2020_GEOGRAPHIC_2D
-    - NSGI:Saba2020_GEOGRAPHIC_3D
-  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius2020_GEOCENTRIC
-EPSG:7789:
-  exclude-transformations:
-    - EPSG:9289
-    - NSGI:Bonaire_DPnet_KADpeil
-    - NSGI:Bonaire_DPnet
+EPSG:4937:  # ETRS89
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:4937  # ETRS89
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - EPSG:4979  # WGS 84
+    - EPSG:4326  # WGS 84
+    - EPSG:7931  # ETRF2000
+    - EPSG:9289  # ETRS89 + LAT NL depth
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/4937
+EPSG:4979:  # WGS 84
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - EPSG:4937  # ETRS89
+    - NSGI:Saba_DPnet_Height  # Saba / Saba DPnet + Saba height
+    - EPSG:28992  # Amersfoort / RD New
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOCENTRIC  # St Eustatius 2020
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
+    - EPSG:4979  # WGS 84
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - EPSG:4326  # WGS 84
+    - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - EPSG:7931  # ETRF2000
+    - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/4979
+EPSG:7415:  # Amersfoort / RD New + NAP height
+  test-exclude-time-dependent-transformations:
+    - OGC:CRS84h  # CRS84h
+    - OGC:CRS84  # CRS84
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:4937  # ETRS89
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - EPSG:4979  # WGS 84
+    - EPSG:4326  # WGS 84
+    - EPSG:7931  # ETRF2000
+    - EPSG:9289  # ETRS89 + LAT NL depth
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/7415
+EPSG:7789:  # ITRF2014
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - EPSG:4937  # ETRS89
+    - NSGI:Saba_DPnet_Height  # Saba / Saba DPnet + Saba height
+    - EPSG:28992  # Amersfoort / RD New
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOCENTRIC  # St Eustatius 2020
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
+    - EPSG:4979  # WGS 84
+    - EPSG:4326  # WGS 84
+    - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - EPSG:7931  # ETRF2000
+    - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
   uri: http://www.opengis.net/def/crs/EPSG/0/7789
+EPSG:7912:  # ITRF2014
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - EPSG:4937  # ETRS89
+    - NSGI:Saba_DPnet_Height  # Saba / Saba DPnet + Saba height
+    - EPSG:28992  # Amersfoort / RD New
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOCENTRIC  # St Eustatius 2020
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
+    - EPSG:4979  # WGS 84
+    - EPSG:4326  # WGS 84
+    - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - EPSG:7931  # ETRF2000
+    - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/7912
+EPSG:7930:  # ETRF2000
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:4937  # ETRS89
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - EPSG:4979  # WGS 84
+    - EPSG:4326  # WGS 84
+    - EPSG:7931  # ETRF2000
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/7930
+EPSG:7931:  # ETRF2000
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:4937  # ETRS89
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - EPSG:4979  # WGS 84
+    - EPSG:4326  # WGS 84
+    - EPSG:7931  # ETRF2000
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/7931
+EPSG:9000:  # ITRF2014
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+  uri: http://www.opengis.net/def/crs/EPSG/0/9000
+EPSG:9067:  # ETRF2000
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:9000  # ITRF2014
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/9067
+EPSG:9286:  # ETRS89 + NAP height
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:4937  # ETRS89
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - EPSG:4979  # WGS 84
+    - EPSG:4326  # WGS 84
+    - EPSG:7931  # ETRF2000
+    - EPSG:9289  # ETRS89 + LAT NL depth
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/9286
+EPSG:9289:  # ETRS89 + LAT NL depth
+  supported-target-crss:
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - EPSG:4937  # ETRS89
+    - EPSG:28992  # Amersfoort / RD New
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:9289  # ETRS89 + LAT NL depth
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/EPSG/0/9289
+NSGI:Bonaire2004_GEOCENTRIC:  # Bonaire 2004
+  supported-target-crss:
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+    - NSGI:Bonaire_DPnet_KADpeil  # Bonaire / Bonaire DPnet + Bonaire KADpeil
+    - NSGI:Bonaire2004_GEOGRAPHIC_3D  # Bonaire 2004
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:4979  # WGS 84
+    - NSGI:Bonaire2004_GEOCENTRIC  # Bonaire 2004
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire2004_GEOCENTRIC
+NSGI:Bonaire2004_GEOGRAPHIC_2D:  # Bonaire 2004
+  supported-target-crss:
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire2004_GEOGRAPHIC_2D
+NSGI:Bonaire2004_GEOGRAPHIC_3D:  # Bonaire 2004
+  supported-target-crss:
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+    - NSGI:Bonaire_DPnet_KADpeil  # Bonaire / Bonaire DPnet + Bonaire KADpeil
+    - NSGI:Bonaire2004_GEOGRAPHIC_3D  # Bonaire 2004
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:4979  # WGS 84
+    - NSGI:Bonaire2004_GEOCENTRIC  # Bonaire 2004
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire2004_GEOGRAPHIC_3D
+NSGI:Bonaire_DPnet:  # Bonaire / Bonaire DPnet
+  supported-target-crss:
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire_DPnet
+NSGI:Bonaire_DPnet_KADpeil:  # Bonaire / Bonaire DPnet + Bonaire KADpeil
+  supported-target-crss:
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - NSGI:Bonaire2004_GEOGRAPHIC_3D  # Bonaire 2004
+    - NSGI:Bonaire_DPnet_KADpeil  # Bonaire / Bonaire DPnet + Bonaire KADpeil
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+    - NSGI:Bonaire2004_GEOCENTRIC  # Bonaire 2004
+    - OGC:CRS84h  # CRS84h
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Bonaire_DPnet_KADpeil
+NSGI:Saba2020_GEOCENTRIC:  # Saba 2020
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
+    - OGC:CRS84h  # CRS84h
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - NSGI:Saba_DPnet_Height  # Saba / Saba DPnet + Saba height
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba2020_GEOCENTRIC
+NSGI:Saba2020_GEOGRAPHIC_2D:  # Saba 2020
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba2020_GEOGRAPHIC_2D
+NSGI:Saba2020_GEOGRAPHIC_3D:  # Saba 2020
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
+    - OGC:CRS84h  # CRS84h
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - NSGI:Saba_DPnet_Height  # Saba / Saba DPnet + Saba height
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba2020_GEOGRAPHIC_3D
+NSGI:Saba_DPnet:  # Saba / Saba Dpnet
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba_DPnet
+NSGI:Saba_DPnet_Height:  # Saba / Saba DPnet + Saba height
+  test-exclude-time-dependent-transformations:
+    - OGC:CRS84h  # CRS84h
+    - OGC:CRS84  # CRS84
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
+    - OGC:CRS84h  # CRS84h
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - NSGI:Saba_DPnet_Height  # Saba / Saba DPnet + Saba height
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/Saba_DPnet_Height
+NSGI:St_Eustatius2020_GEOCENTRIC:  # St Eustatius 2020
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOCENTRIC  # St Eustatius 2020
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius2020_GEOCENTRIC
+NSGI:St_Eustatius2020_GEOGRAPHIC_2D:  # St Eustatius 2020
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius2020_GEOGRAPHIC_2D
+NSGI:St_Eustatius2020_GEOGRAPHIC_3D:  # St Eustatius 2020
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOCENTRIC  # St Eustatius 2020
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius2020_GEOGRAPHIC_3D
+NSGI:St_Eustatius_DPnet:  # St Eustatius /  St Eustatius DPnet
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius_DPnet
+NSGI:St_Eustatius_DPnet_Height:  # St Eustatius / St Eustatius DPnet + St Eustatius height
+  test-exclude-time-dependent-transformations:  # tijdsafhankelijke transformatie werkt nog niet goed met de huidige PROJ database
+    - OGC:CRS84h  # CRS84h
+    - OGC:CRS84  # CRS84
+  supported-target-crss:
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - EPSG:4326  # WGS 84
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - OGC:CRS84h  # CRS84h
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOCENTRIC  # St Eustatius 2020
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:4979  # WGS 84
+  uri: http://www.nsgi.nl/def/crs/NSGI/0/St_Eustatius_DPnet_Height
+OGC:CRS84:  # CRS84
+  supported-target-crss:
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - EPSG:28992  # Amersfoort / RD New
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - EPSG:9000  # ITRF2014
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - EPSG:4326  # WGS 84
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/OGC/0/CRS84
+OGC:CRS84h:  # CRS84h
+  supported-target-crss:
+    - EPSG:7930  # ETRF2000
+    - EPSG:3857  # WGS 84 / Pseudo-Mercator
+    - EPSG:9067  # ETRF2000
+    - NSGI:Saba2020_GEOGRAPHIC_2D  # Saba 2020
+    - EPSG:4937  # ETRS89
+    - NSGI:Saba_DPnet_Height  # Saba / Saba DPnet + Saba height
+    - EPSG:28992  # Amersfoort / RD New
+    - NSGI:Saba_DPnet  # Saba / Saba Dpnet
+    - EPSG:7415  # Amersfoort / RD New + NAP height
+    - EPSG:9000  # ITRF2014
+    - EPSG:7912  # ITRF2014
+    - EPSG:7789  # ITRF2014
+    - EPSG:32620  # WGS 84 / UTM zone 20N
+    - OGC:CRS84  # CRS84
+    - OGC:CRS84h  # CRS84h
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_2D  # St Eustatius 2020
+    - NSGI:St_Eustatius2020_GEOCENTRIC  # St Eustatius 2020
+    - EPSG:3043  # ETRS89 / UTM zone 31N (N-E)
+    - EPSG:3035  # ETRS89-extended / LAEA Europe
+    - EPSG:4936  # ETRS89
+    - EPSG:32631  # WGS 84 / UTM zone 31N
+    - EPSG:9286  # ETRS89 + NAP height
+    - NSGI:Saba2020_GEOCENTRIC  # Saba 2020
+    - NSGI:St_Eustatius2020_GEOGRAPHIC_3D  # St Eustatius 2020
+    - EPSG:4979  # WGS 84
+    - EPSG:32619  # WGS 84 / UTM zone 19N
+    - NSGI:Bonaire2004_GEOGRAPHIC_2D  # Bonaire 2004
+    - EPSG:4326  # WGS 84
+    - NSGI:Saba2020_GEOGRAPHIC_3D  # Saba 2020
+    - NSGI:St_Eustatius_DPnet  # St Eustatius /  St Eustatius DPnet
+    - EPSG:7931  # ETRF2000
+    - NSGI:St_Eustatius_DPnet_Height  # St Eustatius / St Eustatius DPnet + St Eustatius height
+    - EPSG:3044  # ETRS89 / UTM zone 32N (N-E)
+    - NSGI:Bonaire_DPnet  # Bonaire / Bonaire DPnet
+    - EPSG:32632  # WGS 84 / UTM zone 32N
+    - EPSG:4258  # ETRS89
+    - EPSG:3034  # ETRS89-extended / LCC Europe
+  uri: http://www.opengis.net/def/crs/OGC/0/CRS84h

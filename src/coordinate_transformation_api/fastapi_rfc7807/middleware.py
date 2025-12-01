@@ -109,6 +109,8 @@ class ProblemError(Exception):
     more granular control over how/when values are set.
     """
 
+    __hash__ = None  # type: ignore[assignment]
+
     def __init__(
         self: "ProblemError",
         type: str | None = None,
@@ -334,7 +336,7 @@ def from_exception(exc: Exception) -> ProblemError:
     Returns:
         A new Problem instance populated from the Exception.
     """
-    logger.exception(exc, stack_info=True)
+    logger.exception(exc, stack_info=app_settings.debug)
     if app_settings.debug:
         return ProblemError(
             title="Unexpected Server Error",

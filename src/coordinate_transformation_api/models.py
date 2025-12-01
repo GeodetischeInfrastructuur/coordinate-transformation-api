@@ -1,8 +1,25 @@
+import logging
 from enum import Enum
+from importlib import resources as impresources
 
+import yaml
 from geodense.geojson import CrsFeatureCollection
 from pydantic import BaseModel, Field, computed_field
 from pyproj import CRS as ProjCrs  # noqa: N811
+
+from coordinate_transformation_api import assets
+
+assets_resources = impresources.files(assets)
+crs_conf = assets_resources.joinpath("crs-config.yaml")
+logger: logging.Logger
+logger = logging.getLogger(__name__)
+
+try:
+    with open(str(crs_conf)) as f:
+        CRS_CONFIG = yaml.safe_load(f)
+except (FileNotFoundError, yaml.YAMLError) as e:
+    logger.error(f"Error loading CRS config: {e}")
+    CRS_CONFIG = None
 
 
 class DataValidationError(Exception):
@@ -57,7 +74,7 @@ class TransformationNotPossibleError(DataValidationError):
         self.reason = reason
 
         # Call the base class constructor with the parameters it needs
-        message = f"Transformation not possible between {self.src_crs_str()} and {self.target_crs_str()}, {reason}"
+        message = f"Transformation not possible from '{src_crs.name}' ({self.src_crs_str()}) to '{target_crs.name}' ({self.target_crs_str()}), {reason}"
         super().__init__(message)
         # Now for your custom code...
 
@@ -124,7 +141,7 @@ class DensityCheckReport(BaseModel):
 
     @classmethod
     def from_fc_report(
-        cls,  # noqa: ANN102
+        cls,
         fc_report: CrsFeatureCollection,
     ) -> "DensityCheckReport":
         check_result = len(fc_report.features) == 0
@@ -158,15 +175,23 @@ class Axis(BaseModel):
 
 
 class Crs(BaseModel):
+    links: dict
     crs: str
     name: str
     type_name: str
     crs_auth_identifier: str
     authority: str
     identifier: str
+    supported_target_crss: list[str]
 
     @classmethod
-    def from_crs_str(cls, crs_str: str) -> "Crs":  # noqa: ANN102
+    def get_supported_target_crss(cls, crs: str) -> list[str]:
+        if crs not in CRS_CONFIG:
+            raise ValueError(f"Unknown CRS {crs}")
+        return list(CRS_CONFIG[crs]["supported-target-crss"])
+
+    @classmethod
+    def from_crs_str(cls, crs_str: str, base_url: str = "") -> "Crs":
         # Do some math here and later set the values
         auth, identifier = crs_str.split(":")
         pyproj_crs = ProjCrs.from_authority(auth, identifier)
@@ -182,14 +207,19 @@ class Crs(BaseModel):
             )
             for a in pyproj_crs.axis_info
         ]
+        self_link = ""
+        if base_url != "":
+            self_link = f"{base_url}/crss/{crs_str}"
         return cls(
             crs=f"https://www.opengis.net/def/crs/{auth}/0/{identifier}",
+            links={"self": self_link},
             name=pyproj_crs.name,
             type_name=pyproj_crs.type_name,
             crs_auth_identifier=pyproj_crs.srs,
             axes=axes,
             authority=auth,
             identifier=identifier,
+            supported_target_crss=Crs.get_supported_target_crss(crs_str),
         )
 
     @computed_field  # type: ignore

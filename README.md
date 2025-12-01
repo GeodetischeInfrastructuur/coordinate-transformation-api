@@ -54,6 +54,12 @@ Enable [pre-commit](https://pre-commit.com/) hooks with:
 pre-commit install
 ```
 
+Update comments in `crs-config.yaml` (set CRS name in comment):
+
+```sh
+python3 -m coordinate_transformation_api.main comment-crs-config
+```
+
 ### direnv config
 
 Repository also contains a [`.envrc`](https://direnv.net/) config file, which automatically activates the `uv` managed
