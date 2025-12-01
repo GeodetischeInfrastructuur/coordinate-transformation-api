@@ -26,7 +26,7 @@ jobs:
           version: "0.4.19"
       - name: Install dependencies
         run: |
-          uv sync
+          uv sync --dev
       - name: Set env PATH
         run: echo "PATH="$(pwd)/.venv/bin:$PATH"" >> $GITHUB_ENV
       - name: Set env PROJ_DIR
