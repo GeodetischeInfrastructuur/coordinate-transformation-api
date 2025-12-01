@@ -1,3 +1,4 @@
+import logging
 from enum import Enum
 from importlib import resources as impresources
 
@@ -10,8 +11,15 @@ from coordinate_transformation_api import assets
 
 assets_resources = impresources.files(assets)
 crs_conf = assets_resources.joinpath("crs-config.yaml")
-with open(str(crs_conf)) as f:
-    CRS_CONFIG = yaml.safe_load(f)
+logger: logging.Logger
+logger = logging.getLogger(__name__)
+
+try:
+    with open(str(crs_conf)) as f:
+        CRS_CONFIG = yaml.safe_load(f)
+except (FileNotFoundError, yaml.YAMLError) as e:
+    logger.error(f"Error loading CRS config: {e}")
+    CRS_CONFIG = None
 
 
 class DataValidationError(Exception):
@@ -133,7 +141,7 @@ class DensityCheckReport(BaseModel):
 
     @classmethod
     def from_fc_report(
-        cls,  # noqa: ANN102
+        cls,
         fc_report: CrsFeatureCollection,
     ) -> "DensityCheckReport":
         check_result = len(fc_report.features) == 0
@@ -177,13 +185,13 @@ class Crs(BaseModel):
     supported_target_crss: list[str]
 
     @classmethod
-    def get_supported_target_crss(cls, crs: str) -> list[str]:  # noqa: ANN102
+    def get_supported_target_crss(cls, crs: str) -> list[str]:
         if crs not in CRS_CONFIG:
             raise ValueError(f"Unknown CRS {crs}")
         return list(CRS_CONFIG[crs]["supported-target-crss"])
 
     @classmethod
-    def from_crs_str(cls, crs_str: str, base_url: str = "") -> "Crs":  # noqa: ANN102
+    def from_crs_str(cls, crs_str: str, base_url: str = "") -> "Crs":
         # Do some math here and later set the values
         auth, identifier = crs_str.split(":")
         pyproj_crs = ProjCrs.from_authority(auth, identifier)

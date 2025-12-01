@@ -19,8 +19,8 @@ def test_feature_bbox():
 
         feature_t = crs_transform(
             feature,
-            CRS.from_authority(*"EPSG:28992".split(":")),
-            CRS.from_authority(*"EPSG:4326".split(":")),
+            CRS.from_authority(*["EPSG", "28992"]),
+            CRS.from_authority(*["EPSG", "4326"]),
         )
 
         feature_dict = json.loads(feature.model_dump_json())

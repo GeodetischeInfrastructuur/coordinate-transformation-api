@@ -109,6 +109,8 @@ class ProblemError(Exception):
     more granular control over how/when values are set.
     """
 
+    __hash__ = None  # type: ignore[assignment]
+
     def __init__(
         self: "ProblemError",
         type: str | None = None,

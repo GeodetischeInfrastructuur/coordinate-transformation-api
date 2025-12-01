@@ -23,6 +23,7 @@ from geodense.lib import GeodenseError  # type: ignore
 from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry, GeometryCollection
 from geojson_pydantic.types import Position, Position2D, Position3D
+from pyproj import CRS
 
 from coordinate_transformation_api import assets
 from coordinate_transformation_api.access_log_middleware import AccessLogMiddleware
@@ -670,8 +671,6 @@ def comment_crs_config() -> None:
             if match:
                 crs_id = match.group(1)
                 try:
-                    from pyproj import CRS
-
                     crs = CRS.from_authority(*crs_id.split(":"))
                     line = line.split("#")[0].rstrip()
                     line = f"{line.replace('\n', '')}  # {crs.name}\n"

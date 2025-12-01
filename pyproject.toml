@@ -105,8 +105,10 @@ select = [
     "Q",
     "ANN",
 ]
-# Avoid enforcing line-length violations (`E501`) - fixed by Black
-ignore = ["E501"]
+# Avoid enforcing:
+# - line-length violations (`E501`) - fixed by Black
+# - ANN102 Missing type annotation for cls in classmethod
+ignore = ["E501", "ANN102"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
