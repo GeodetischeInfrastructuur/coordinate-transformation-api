@@ -201,16 +201,11 @@ async def geojson_schema(filename: str) -> Response:
     # Define allowed schema files
     # Define allowed schema files - use a set for O(1) lookup
     allowed_files = {
-        "feature.json",
-        "feature-collection.json",
-        "geometry.json",
-        "geometry-collection.json",
-        "point.json",
-        "line-string.json",
-        "polygon.json",
-        "multi-point.json",
-        "multi-line-string.json",
-        "multi-polygon.json",
+        "Feature.json",
+        "FeatureCollection.json",
+        "Geometry.json",
+        "GeometryCollection.json",
+        "Point.json",
     }
 
     # Sanitize filename to prevent path traversal attacks

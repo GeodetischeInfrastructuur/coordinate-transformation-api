@@ -10,11 +10,11 @@ classifiers = [
 ]
 readme = { file = "./README.md", content-type = "text/markdown" }
 dependencies = [
-    "fastapi[all]==0.128.8",
-    "uvicorn==0.40.0",
+    "fastapi[all]==0.133.0",
+    "uvicorn==0.41.0",
     "pyyaml == 6.0.3",
     "geojson_pydantic == 1.2.0",
-    "pyproj ~= 3.7.0",
+    "pyproj == 3.7.2",
     "pydantic-settings==2.12.0",
     "email-validator == 2.3.0",
     "geodense ~= 2.0.2",
@@ -23,6 +23,21 @@ dependencies = [
 requires-python = ">=3.12"
 dynamic = ["version"]
 
+
+[dependency-groups]
+dev= [
+    "prek>=0.3.3",
+    "ruff>=0.6.4",
+    "yamllint>=1.35.1",
+    "coverage == 7.6.1",
+    "mypy == 1.11.2",
+    "pytest == 8.3.2",
+    "ruff == 0.6.4",
+    "types-ujson == 5.10.0.20240515",
+    "types-PyYAML == 6.0.12.20240808",
+    "pytest-asyncio == 0.24.0",
+    "types-shapely>=2.0.0.20240820",
+]
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
@@ -131,20 +146,7 @@ unfixable = []
 max-complexity = 10
 
 
-[tool.uv]
-dev-dependencies = [
-    "pre-commit>=4.0.0",
-    "ruff>=0.6.4",
-    "yamllint>=1.35.1",
-    "coverage == 7.6.1",
-    "mypy == 1.11.2",
-    "pytest == 8.3.2",
-    "ruff == 0.6.4",
-    "types-ujson == 5.10.0.20240515",
-    "types-PyYAML == 6.0.12.20240808",
-    "pytest-asyncio == 0.24.0",
-    "types-shapely>=2.0.0.20240820",
-]
+
 
 
 [tool.mypy]
