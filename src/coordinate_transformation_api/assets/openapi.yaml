@@ -169,10 +169,10 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: schemas/geojson/Feature.json
-                - $ref: schemas/geojson/FeatureCollection.json
-                - $ref: schemas/geojson/Geometry.json
-                - $ref: schemas/geojson/GeometryCollection.json
+                - $ref: assets/schemas/geojson/Feature.json
+                - $ref: assets/schemas/geojson/FeatureCollection.json
+                - $ref: assets/schemas/geojson/Geometry.json
+                - $ref: assets/schemas/geojson/GeometryCollection.json
               example:
                 type: FeatureCollection
                 name: lijnen
@@ -244,10 +244,10 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: schemas/geojson/Feature.json
-                - $ref: schemas/geojson/FeatureCollection.json
-                - $ref: schemas/geojson/Geometry.json
-                - $ref: schemas/geojson/GeometryCollection.json
+                - $ref: assets/schemas/geojson/Feature.json
+                - $ref: assets/schemas/geojson/FeatureCollection.json
+                - $ref: assets/schemas/geojson/Geometry.json
+                - $ref: assets/schemas/geojson/GeometryCollection.json
             example:
               type: Feature
               properties:
@@ -265,7 +265,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: schemas/geojson/FeatureCollection.json
+                $ref: assets/schemas/geojson/FeatureCollection.json
               example:
                 type: FeatureCollection
                 name: lijnen
@@ -318,7 +318,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: schemas/geojson/Point.json
+                $ref: assets/schemas/geojson/Point.json
                 example:
                   type: Point
                   coordinates:
@@ -381,10 +381,10 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: schemas/geojson/Feature.json
-                - $ref: schemas/geojson/FeatureCollection.json
-                - $ref: schemas/geojson/Geometry.json
-                - $ref: schemas/geojson/GeometryCollection.json
+                - $ref: assets/schemas/geojson/Feature.json
+                - $ref: assets/schemas/geojson/FeatureCollection.json
+                - $ref: assets/schemas/geojson/Geometry.json
+                - $ref: assets/schemas/geojson/GeometryCollection.json
             examples:
               GeoJSON:
                 value:
@@ -683,10 +683,10 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: schemas/geojson/Feature.json
-                  - $ref: schemas/geojson/FeatureCollection.json
-                  - $ref: schemas/geojson/Geometry.json
-                  - $ref: schemas/geojson/GeometryCollection.json
+                  - $ref: assets/schemas/geojson/Feature.json
+                  - $ref: assets/schemas/geojson/FeatureCollection.json
+                  - $ref: assets/schemas/geojson/Geometry.json
+                  - $ref: assets/schemas/geojson/GeometryCollection.json
               example:
                 type: Feature
                 geometry:
@@ -1046,7 +1046,7 @@ components:
           description: FeatureCollection containing line segments that failed density-check. If all line segments passed density-check, value of `failedLineSegments` is `null`.
           oneOf:
             - type: 'null' # Note the quotes around 'null'
-            - $ref: schemas/geojson/FeatureCollection.json
+            - $ref: assets/schemas/geojson/FeatureCollection.json
       type: object
     DensityCheckResultEnum:
       enum:
