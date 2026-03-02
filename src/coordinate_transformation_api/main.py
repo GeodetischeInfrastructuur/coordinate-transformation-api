@@ -34,6 +34,7 @@ from coordinate_transformation_api.crs_transform import (
     CRS_CONFIG,
 )
 from coordinate_transformation_api.fastapi_rfc7807 import middleware
+from coordinate_transformation_api.fastapi_rfc7807.middleware import from_data_validation_error
 from coordinate_transformation_api.limit_middleware.middleware import (
     ContentSizeLimitMiddleware,
     TimeoutMiddleware,
@@ -133,6 +134,21 @@ if app_settings.cors_allow_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+
+@app.exception_handler(DensityCheckFailedError)
+async def density_check_failed_handler(exc: DensityCheckFailedError) -> JSONResponse:
+    logger.debug({str(exc)})
+
+    problem_error = from_data_validation_error(exc)
+    response_data = problem_error.to_dict()
+
+    return JSONResponse(
+        status_code=problem_error.status,
+        content=response_data,
+        headers={DENSITY_CHECK_RESULT_HEADER: "failed"},
+    )
+
 
 app.mount(
     "/assets",
