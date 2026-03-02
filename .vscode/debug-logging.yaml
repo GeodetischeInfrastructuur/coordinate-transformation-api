@@ -1,4 +1,7 @@
 disable_existing_loggers: false
+filters:
+  healthcheck_filter:
+    (): coordinate_transformation_api.util.HealthCheckFilter
 formatters:
   access:
     (): uvicorn.logging.AccessFormatter
@@ -12,6 +15,8 @@ handlers:
     class: logging.StreamHandler
     formatter: access
     stream: ext://sys.stdout
+    filters:
+      - healthcheck_filter
   default:
     class: logging.StreamHandler
     formatter: default

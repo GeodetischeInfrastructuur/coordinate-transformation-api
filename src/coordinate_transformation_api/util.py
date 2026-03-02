@@ -58,6 +58,12 @@ BBOX_3D_DIMENSION = 6
 logger = logging.getLogger(__name__)
 
 
+class HealthCheckFilter(logging.Filter):
+    def filter(self: HealthCheckFilter, record: logging.LogRecord) -> bool:
+        message = record.getMessage()
+        return not any(path in message for path in ["/readiness", "/liveness"])
+
+
 def validate_coords_source_crs(position: Position, source_crs, projections_axis_info: list[AvailableCrs]):
     source_crs_dims = next(
         crs.nr_of_dimensions for crs in projections_axis_info if source_crs == crs.crs_auth_identifier
