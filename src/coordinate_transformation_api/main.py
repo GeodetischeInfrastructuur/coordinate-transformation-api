@@ -137,7 +137,7 @@ if app_settings.cors_allow_origins:
 
 
 @app.exception_handler(DensityCheckFailedError)
-async def density_check_failed_handler(exc: DensityCheckFailedError) -> JSONResponse:
+async def density_check_failed_handler(_: Request, exc: DensityCheckFailedError) -> JSONResponse:
     logger.debug({str(exc)})
 
     problem_error = from_data_validation_error(exc)
