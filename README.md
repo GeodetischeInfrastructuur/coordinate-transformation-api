@@ -45,13 +45,19 @@ Project uses [uv](https://docs.astral.sh/uv/) for package management. To get sta
 Install dev dependencies with:
 
 ```sh
-uv sync
+uv sync --group dev
 ```
 
-Enable [pre-commit](https://pre-commit.com/) hooks with:
+Enable [prek](https://prek.j178.dev/) pre-commit hooks with:
 
 ```sh
-pre-commit install
+prek install && prek install-hooks
+```
+
+These hooks are configured in [prek.toml](prek.toml) and can be manually run with:
+
+```sh
+prek run -a
 ```
 
 ### direnv config
