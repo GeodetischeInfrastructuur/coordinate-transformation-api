@@ -7,6 +7,7 @@ from collections.abc import Awaitable, Callable
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.types import ASGIApp
 
 # Thread-local storage for request metadata (survives async context switches)
 _request_data = threading.local()
@@ -54,11 +55,11 @@ class AccessLogMiddleware(BaseHTTPMiddleware):
 
     def __init__(
         self: "AccessLogMiddleware",
-        app: object,
+        app: ASGIApp,
         log_forwarded_for: bool = False,
         client_ip_header: str | None = None,
     ) -> None:
-        super().__init__(app)  # type: ignore[arg-type]
+        super().__init__(app)
         self.log_forwarded_for = log_forwarded_for
         self.client_ip_header = client_ip_header
 

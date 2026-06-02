@@ -39,9 +39,9 @@ jobs:
       - name: Lint with ruff
         run: |
           ruff check .
-      - name: Run Mypy
+      - name: Run ty
         run: |
-          mypy src/
+          ty check src/
       - name: Test with pytest and generate coverage report
         run: |-
           coverage run --source=src/coordinate_transformation_api -m pytest -v -k 'not validation' tests

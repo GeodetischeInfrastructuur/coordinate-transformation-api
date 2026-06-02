@@ -30,7 +30,7 @@ dev= [
     "ruff>=0.15.15",
     "yamllint>=1.35.1",
     "coverage == 7.14.1",
-    "mypy == 2.1.0",
+    "ty>=0.0.42",
     "pytest == 9.0.3",
     "ruff == 0.15.15",
     "types-ujson == 5.10.0.20250822",
@@ -139,6 +139,9 @@ unfixable = []
 "src/coordinate_transformation_api/cityjson/models.py" = [
     "N815", # non-snakecase variables allowed
 ]
+"src/coordinate_transformation_api/models.py" = [
+    "ANN102",  # cls parameter type annotation not required
+]
 "src/coordinate_transformation_api/util.py" = ["ANN"]
 
 [tool.ruff.lint.mccabe]
@@ -149,16 +152,8 @@ max-complexity = 10
 
 
 
-[tool.mypy]
-plugins = "pydantic.mypy"
-
-warn_return_any = true
-warn_unused_configs = true
-
-
-[[tool.mypy.overrides]]
-module = ["geodense.*"]
-ignore_missing_imports = true
+[tool.ty.src]
+exclude = ["tests"]
 
 
 [tool.pytest.ini_options]

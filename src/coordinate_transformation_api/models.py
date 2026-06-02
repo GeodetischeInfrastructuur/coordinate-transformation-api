@@ -124,7 +124,7 @@ class DensityCheckReport(BaseModel):
 
     @classmethod
     def from_fc_report(
-        cls,  # noqa: ANN102
+        cls,
         fc_report: CrsFeatureCollection,
     ) -> "DensityCheckReport":
         check_result = len(fc_report.features) == 0
@@ -166,7 +166,7 @@ class Crs(BaseModel):
     identifier: str
 
     @classmethod
-    def from_crs_str(cls, crs_str: str) -> "Crs":  # noqa: ANN102
+    def from_crs_str(cls, crs_str: str) -> "Crs":
         # Do some math here and later set the values
         auth, identifier = crs_str.split(":")
         pyproj_crs = ProjCrs.from_authority(auth, identifier)
@@ -192,7 +192,7 @@ class Crs(BaseModel):
             identifier=identifier,
         )
 
-    @computed_field  # type: ignore
+    @computed_field
     @property
     def nr_of_dimensions(self: "Crs") -> int:
         return len(self.axes)

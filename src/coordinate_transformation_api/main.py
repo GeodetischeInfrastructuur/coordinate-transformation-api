@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTex
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
 from geodense.geojson import CrsFeatureCollection
-from geodense.lib import GeodenseError  # type: ignore
+from geodense.lib import GeodenseError
 from geojson_pydantic import Feature
 from geojson_pydantic.geometries import Geometry, GeometryCollection
 from geojson_pydantic.types import Position, Position2D, Position3D
@@ -93,7 +93,7 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator:
     global logger  # noqa: PLW0603
     logger = logging.getLogger(__name__)
     logger.info(f"settings: {app_settings}")
-    logger.info(f"pyproj datadir: {pyproj.datadir.get_data_dir()}")
+    logger.info(f"pyproj datadir: {pyproj.datadir.get_data_dir()}")  # type: ignore
     if not app_settings.debug:  # suppres pyproj warnings in prod
         logging.getLogger("pyproj").setLevel(logging.ERROR)
     with suppress(asyncio.CancelledError):  # required for cancellation see runner method
@@ -125,7 +125,7 @@ if app_settings.access_log:
 if app_settings.cors_allow_origins:
     allow_origins: list[str]
     if app_settings.cors_allow_origins == "*":
-        allow_origins = [app_settings.cors_allow_origins]
+        allow_origins = ["*"]
     else:
         allow_origins = [str(x).rstrip("/") for x in app_settings.cors_allow_origins]
     app.add_middleware(
@@ -172,7 +172,7 @@ async def add_security_headers(request: Request, call_next: Callable) -> Respons
             "frame-ancestors 'self';"
         )
 
-    return response  # type: ignore
+    return response
 
 
 @app.middleware("http")
@@ -297,7 +297,7 @@ async def readiness() -> dict:
 
 
 @app.get("/", response_model=LandingPage)
-async def landingpage():  # type: ignore  # noqa: ANN201
+async def landingpage():  # noqa: ANN201
     self = Link(
         title="API Landing Page",
         rel="self",
@@ -371,8 +371,8 @@ async def densify(  # noqa: ANN201
     max_segment_deviation: Annotated[float | None, Query(alias="max-segment-deviation", ge=0.0001)] = None,
     max_segment_length: Annotated[float | None, Query(alias="max-segment-length", ge=200)] = 200,
 ):
-    source_crs_str: str
-    content_crs_str: str
+    source_crs_str: str | None
+    content_crs_str: str | None
 
     source_crs_str, content_crs_str = (x.value if x is not None else None for x in [source_crs, content_crs])
 
@@ -397,8 +397,8 @@ async def density_check(  # noqa: ANN201
     max_segment_deviation: Annotated[float | None, Query(alias="max-segment-deviation", ge=0.0001)] = None,
     max_segment_length: Annotated[float | None, Query(alias="max-segment-length", ge=200)] = 200,
 ):
-    source_crs_str: str
-    content_crs_str: str
+    source_crs_str: str | None
+    content_crs_str: str | None
 
     source_crs_str, content_crs_str = (x.value if x is not None else None for x in [source_crs, content_crs])
 
@@ -427,18 +427,18 @@ async def transform(  # noqa: PLR0913, ANN201
         str,
         Query(alias="coordinates", pattern=r"^(-?\d+\.?\d*),(-?\d+\.?\d*)(,-?\d+\.?\d*)?$"),
     ],
-    source_crs: Annotated[CrsEnum | None, Query(alias="source-crs")] = None,  # type: ignore
-    target_crs: Annotated[CrsEnum | None, Query(alias="target-crs")] = None,  # type: ignore
-    content_crs: Annotated[CrsHeaderEnum | None, Header(alias="content-crs")] = None,  # type: ignore
-    accept_crs: Annotated[CrsHeaderEnum | None, Header(alias="accept-crs")] = None,  # type: ignore
+    source_crs: Annotated[CrsEnum | None, Query(alias="source-crs")] = None,
+    target_crs: Annotated[CrsEnum | None, Query(alias="target-crs")] = None,
+    content_crs: Annotated[CrsHeaderEnum | None, Header(alias="content-crs")] = None,
+    accept_crs: Annotated[CrsHeaderEnum | None, Header(alias="accept-crs")] = None,
     epoch: Annotated[float | None, Query(alias="epoch")] = None,
     accept: Annotated[str, Header()] = TransformGetAcceptHeaders.json.value,
 ):
     # get string values from CrsEnum|None parameters
-    source_crs_str: str
-    target_crs_str: str
-    content_crs_str: str
-    accept_crs_str: str
+    source_crs_str: str | None
+    target_crs_str: str | None
+    content_crs_str: str | None
+    accept_crs_str: str | None
     source_crs_str, target_crs_str, content_crs_str, accept_crs_str = (
         x.value if x is not None else None for x in [source_crs, target_crs, content_crs, accept_crs]
     )
@@ -450,7 +450,7 @@ async def transform(  # noqa: PLR0913, ANN201
 
     s_crs, t_crs = get_pyproj_crss(source_crs_str, target_crs_str, content_crs_str, accept_crs_str)
 
-    _coords_list = list(map(lambda x: float(x), coordinates.split(",")))
+    _coords_list = [float(x) for x in coordinates.split(",")]
 
     if len(_coords_list) == TWO_DIMENSIONAL:
         position: Position = Position2D(*_coords_list)
@@ -501,10 +501,10 @@ async def post_transform(  # noqa: ANN201, PLR0913
     max_segment_length: Annotated[float | None, Query(alias="max-segment-length", ge=200)] = 200,
 ):
     # get string values from CrsEnum|None parameters
-    source_crs_str: str
-    target_crs_str: str
-    content_crs_str: str
-    accept_crs_str: str
+    source_crs_str: str | None
+    target_crs_str: str | None
+    content_crs_str: str | None
+    accept_crs_str: str | None
     source_crs_str, target_crs_str, content_crs_str, accept_crs_str = (
         x.value if x is not None else None for x in [source_crs, target_crs, content_crs, accept_crs]
     )
@@ -544,7 +544,7 @@ async def post_transform(  # noqa: ANN201, PLR0913
                         val = max_segment_deviation
                     raise DensityCheckFailedError(
                         f"density-check failed, with following query parameters: density-check: True, {val_name.replace('_', '-')}: {val}",
-                        result.model_dump(by_alias=True),  # type: ignore
+                        result.model_dump(by_alias=True),
                     )
             except GeodenseError as e:
                 if str(e) == "GeoJSON contains only (Multi)Point geometries":

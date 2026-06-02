@@ -12,7 +12,7 @@ import yaml
 from fastapi import Request
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from geodense.geojson import CrsFeatureCollection
-from geodense.lib import (  # type: ignore
+from geodense.lib import (
     GeojsonObject,
     check_density_geojson_object,
     densify_geojson_object,
@@ -109,7 +109,7 @@ def get_source_crs_body(
     elif isinstance(body, CityjsonV113) and body.metadata is not None and body.metadata.referenceSystem is not None:
         ref_system: str = body.metadata.referenceSystem
         crs_auth = ref_system.split("/")[-3]
-        crs_id = ref_system.split("/")[-1]
+        crs_id = ref_system.rsplit("/", 1)[-1]
         source_crs = f"{crs_auth}:{crs_id}"
     return source_crs
 
@@ -133,16 +133,16 @@ def request_body_within_valid_bbox(body: GeojsonObject, source_crs: str) -> bool
 
         body_bbox = body_t.bbox
 
-        if len(body_t.bbox) == BBOX_3D_DIMENSION:
+        if len(body_t.bbox) == BBOX_3D_DIMENSION:  # type: ignore
             # reduce bbox to 2D
-            body_bbox = body_t.bbox[0:2] + body_t.bbox[3:5]
+            body_bbox = body_t.bbox[0:2] + body_t.bbox[3:5]  # type: ignore
 
         body_bbox_t = [
-            *transform_f(body_bbox[:2]),
-            *transform_f(body_bbox[2:]),
+            *transform_f(body_bbox[:2]),  # type: ignore
+            *transform_f(body_bbox[2:]),  # type: ignore
         ]
 
-    shapely_bbox = [box(*body_bbox_t)]
+    shapely_bbox = [box(*body_bbox_t)]  # type: ignore
     tree = STRtree(shapely_bbox)
     contains_index = tree.query(box(*DEVIATION_VALID_BBOX), predicate="contains").tolist()  # type: ignore
     return len(shapely_bbox) == len(contains_index)
@@ -167,7 +167,7 @@ def crs_transform(
 ) -> GeojsonObject:
     t_callback = get_transform_crs_fun(s_crs, t_crs, epoch=epoch)
     crs_transform_fun = partial(mutate_geom_coordinates, t_callback)
-    body_t = traverse_geojson_geometries(body, crs_transform_fun, update_bbox)
+    body_t = traverse_geojson_geometries(body, crs_transform_fun, update_bbox)  # type: ignore
 
     if isinstance(body_t, CrsFeatureCollection):
         body_t.set_crs_auth_code("{}:{}".format(*t_crs.to_authority()))
@@ -204,7 +204,7 @@ def density_check_request_body(
 
     if transform:
         failed_line_segments_t = crs_transform(failed_line_segments, transform_crs, source_crs, epoch=epoch)
-    return failed_line_segments_t
+    return failed_line_segments_t  # type: ignore
 
 
 def bbox_check_deviation_set(body: GeojsonObject, source_crs, max_segment_deviation) -> None:
@@ -314,7 +314,7 @@ def raise_response_validation_error(message: str, location):
                     InitErrorDetails(
                         type=PydanticCustomError(
                             "value-error",
-                            message,
+                            message,  # type: ignore
                         ),
                         loc=location,
                         input="",
@@ -339,11 +339,11 @@ def raise_request_validation_error(
                     InitErrorDetails(
                         type=PydanticCustomError(
                             "missing",
-                            message,
+                            message,  # type: ignore
                         ),
                         input=input,
-                        **({"ctx": ctx} if ctx is not None else {}),  # type: ignore
-                        **({"loc": loc} if loc is not None else {}),  # type: ignore
+                        **({"ctx": ctx} if ctx is not None else {}),
+                        **({"loc": loc} if loc is not None else {}),
                     ),
                 ],
             )
@@ -358,7 +358,7 @@ def convert_point_coords_to_wkt(coords):
     return f"{geom_type}({' '.join([str(x) for x in coords])})"
 
 
-def check_crs_is_known(crs_str: str, crs_list: list[AvailableCrs]) -> None:
+def check_crs_is_known(crs_str: str | None, crs_list: list[AvailableCrs]) -> None:
     crs = next((x for x in crs_list if x.crs_auth_identifier == crs_str), None)
     if crs is None:
         raise ValueError(f"could not instantiate CRS object for CRS with id {crs_str}")
@@ -374,8 +374,8 @@ def transform_coordinates(coordinates: Position, source_crs: CRS, target_crs: CR
 
 def get_source_crs(
     body: Feature | CrsFeatureCollection | Geometry | GeometryCollection | CityjsonV113,
-    source_crs: str,
-    content_crs: str,
+    source_crs: str | None,
+    content_crs: str | None,
 ) -> str | None:
     crs_from_body = get_source_crs_body(body)
 
@@ -391,10 +391,10 @@ def get_source_crs(
 
 def post_transform_get_crss(
     body: Feature | CrsFeatureCollection | Geometry | GeometryCollection | CityjsonV113,
-    source_crs: str,
-    target_crs: str,
-    content_crs: str,
-    accept_crs: str,
+    source_crs: str | None,
+    target_crs: str | None,
+    content_crs: str | None,
+    accept_crs: str | None,
 ) -> tuple[CRS, CRS]:
     s_crs = get_source_crs(body, source_crs, content_crs)
 
@@ -442,10 +442,10 @@ def post_transform_get_crss(
 
 
 def get_pyproj_crss(
-    source_crs: str,
-    target_crs: str,
-    content_crs: str,
-    accept_crs: str,
+    source_crs: str | None,
+    target_crs: str | None,
+    content_crs: str | None,
+    accept_crs: str | None,
 ) -> tuple[CRS, CRS]:
     if source_crs is not None:
         s_crs = source_crs
@@ -475,8 +475,8 @@ def get_pyproj_crss(
 
 def get_src_crs_densify(
     body: Feature | CrsFeatureCollection | Geometry | GeometryCollection,
-    source_crs: str,
-    content_crs: str,
+    source_crs: str | None,
+    content_crs: str | None,
 ) -> str:
     s_crs = get_source_crs(body, source_crs, content_crs)
     if s_crs is None and isinstance(body, CrsFeatureCollection):

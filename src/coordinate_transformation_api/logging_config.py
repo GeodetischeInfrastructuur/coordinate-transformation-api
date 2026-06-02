@@ -12,21 +12,21 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
         """Initialize formatter, ignoring use_colors parameter added by uvicorn."""
         # Remove use_colors from kwargs if present, as pythonjsonlogger doesn't support it
         kwargs.pop("use_colors", None)
-        super().__init__(*args, **kwargs)  # type: ignore[arg-type]
+        super().__init__(*args, **kwargs)  # type: ignore
 
     def add_fields(
-        self: "CustomJsonFormatter", log_record: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
+        self: "CustomJsonFormatter", log_data: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
     ) -> None:
-        super().add_fields(log_record, record, message_dict)
+        super().add_fields(log_data, record, message_dict)
         # Add timestamp with ISO format
-        log_record["timestamp"] = datetime.fromtimestamp(record.created, tz=UTC).isoformat()
-        log_record["logger"] = record.name
-        log_record["level"] = record.levelname
-        log_record["function"] = record.funcName
-        log_record["line"] = record.lineno
+        log_data["timestamp"] = datetime.fromtimestamp(record.created, tz=UTC).isoformat()
+        log_data["logger"] = record.name
+        log_data["level"] = record.levelname
+        log_data["function"] = record.funcName
+        log_data["line"] = record.lineno
 
         # Remove color-related fields added by uvicorn
-        log_record.pop("color_message", None)
+        log_data.pop("color_message", None)
 
 
 class AccessLogFormatter(jsonlogger.JsonFormatter):
@@ -43,18 +43,18 @@ class AccessLogFormatter(jsonlogger.JsonFormatter):
         """Initialize formatter, ignoring use_colors parameter added by uvicorn."""
         # Remove use_colors from kwargs if present, as pythonjsonlogger doesn't support it
         kwargs.pop("use_colors", None)
-        super().__init__(*args, **kwargs)  # type: ignore[arg-type]
+        super().__init__(*args, **kwargs)  # type: ignore
         self.log_forwarded_for = log_forwarded_for
         self.client_ip_header = client_ip_header
 
     def add_fields(
-        self: "AccessLogFormatter", log_record: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
+        self: "AccessLogFormatter", log_data: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
     ) -> None:
-        super().add_fields(log_record, record, message_dict)
+        super().add_fields(log_data, record, message_dict)
         # Add timestamp with ISO format
-        log_record["timestamp"] = datetime.fromtimestamp(record.created, tz=UTC).isoformat()
-        log_record["logger"] = record.name
-        log_record["level"] = record.levelname
+        log_data["timestamp"] = datetime.fromtimestamp(record.created, tz=UTC).isoformat()
+        log_data["logger"] = record.name
+        log_data["level"] = record.levelname
 
         # Parse uvicorn access log message to extract components
         # Format: '{client_addr} - "{method} {path} {http_version}" {status_code}'
@@ -66,41 +66,41 @@ class AccessLogFormatter(jsonlogger.JsonFormatter):
                 if len(args) >= min_args_count:
                     client_addr = str(args[0])
                     # Extract IP from "ip:port" format
-                    log_record["client_ip"] = client_addr.split(":")[0] if ":" in client_addr else client_addr
-                    log_record["method"] = args[1]
-                    log_record["path"] = args[2]
-                    log_record["http_version"] = args[3]
-                    log_record["status_code"] = args[4]
+                    log_data["client_ip"] = client_addr.split(":", 1)[0] if ":" in client_addr else client_addr
+                    log_data["method"] = args[1]
+                    log_data["path"] = args[2]
+                    log_data["http_version"] = args[3]
+                    log_data["status_code"] = args[4]
             except (IndexError, AttributeError, TypeError):
                 pass
 
         # Add X-Forwarded-For if configured and available
         if self.log_forwarded_for and hasattr(record, "x_forwarded_for"):
-            x_forwarded_for = record.x_forwarded_for
-            log_record["x_forwarded_for"] = x_forwarded_for
+            x_forwarded_for: str = record.x_forwarded_for  # type: ignore
+            log_data["x_forwarded_for"] = x_forwarded_for
             # Extract real client IP (first IP in X-Forwarded-For chain)
             # Format: "client, proxy1, proxy2, ..."
-            first_ip = x_forwarded_for.split(",")[0].strip()
+            first_ip = x_forwarded_for.split(",", 1)[0].strip()
             if first_ip:
-                log_record["real_client_ip"] = first_ip
+                log_data["real_client_ip"] = first_ip
 
         # Add alternative client IP header if configured
         if self.client_ip_header and hasattr(record, "client_ip_value"):
-            client_ip_value = record.client_ip_value
-            log_record[self.client_ip_header.lower().replace("-", "_")] = client_ip_value
+            client_ip_value: str = record.client_ip_value  # type: ignore
+            log_data[self.client_ip_header.lower().replace("-", "_")] = client_ip_value
             # Use this as the real client IP
-            log_record["real_client_ip"] = client_ip_value.strip()
+            log_data["real_client_ip"] = client_ip_value.strip()
 
         # Add Host header if available
         if hasattr(record, "host"):
-            log_record["host"] = record.host
+            log_data["host"] = record.host
 
         # Add response time if available (in milliseconds)
         if hasattr(record, "response_time"):
-            log_record["response_time_ms"] = record.response_time
+            log_data["response_time_ms"] = record.response_time
 
         # Remove color-related fields added by uvicorn
-        log_record.pop("color_message", None)
+        log_data.pop("color_message", None)
 
 
 def get_json_logging_config(

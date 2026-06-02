@@ -6,7 +6,7 @@ from itertools import chain
 from typing import Any, cast
 
 import yaml
-from geodense.lib import (  # type: ignore
+from geodense.lib import (
     GeojsonObject,
     InfValCoordinateError,
     transform_geojson_geometries,
@@ -61,7 +61,7 @@ def get_shapely_objects(
     flat_result: list[ShapelyGeometry] = []
     # check if result iterable
     if hasattr(result, "__iter__"):
-        for item in result:
+        for item in result:  # type: ignore
             if isinstance(item, list):
                 flat_result.append(ShpGeometryCollection(item))
             else:
@@ -232,7 +232,7 @@ def build_input_coord(coord: CoordinatesType, epoch: float | None) -> Coordinate
     # that the epoch is an epoch and not the height, without this intervention the epoch
     # would be place in the firth position of the tuple.
     if len(coord) == TWO_DIMENSIONAL and epoch is not None:
-        return tuple([*coord, 0.0, epoch])
+        return tuple([*coord, 0.0, epoch])  # type: ignore
 
     # Default behaviour
     # The input_coord == coord that are given. When an epoch is provided with a 3D coord
@@ -245,7 +245,7 @@ def build_input_coord(coord: CoordinatesType, epoch: float | None) -> Coordinate
         ]
     )
 
-    return input_coord
+    return input_coord  # type: ignore
 
 
 def get_transform_crs_fun_city_json(
@@ -343,16 +343,16 @@ def transform_compound_crs(  # noqa: PLR0913
     round_hor_f = partial(_round, precision)
     round_ver_f = partial(_round, HEIGHT_DIGITS_FOR_ROUNDING)
 
-    hor = tuple(map(round_hor_f, hor_transformer.transform(*val_epoch)))[
-        :2
-    ]  # can contain z coordinate, since PROJ retains Z value even if target-crs is 2d, so limit to two coordinates
+    hor = tuple(
+        map(round_hor_f, hor_transformer.transform(*val_epoch))  # type: ignore
+    )[:2]  # can contain z coordinate, since PROJ retains Z value even if target-crs is 2d, so limit to two coordinates
 
     pos_2d = Position2D(*hor[:2])
 
     output_pos: Position = pos_2d
 
     if target_dim == THREE_DIMENSIONAL:
-        ver = tuple(map(round_ver_f, ver_transformer.transform(*val_epoch)))  # only
+        ver = tuple(map(round_ver_f, ver_transformer.transform(*val_epoch)))  # type: ignore  # only
         if len(
             ver
         ) >= THREE_DIMENSIONAL and not math.isinf(  # note len(v) can be larger than three when epoch is supplied
@@ -397,7 +397,7 @@ def transform_crs(
     round_hor_f = partial(_round, precision)
     round_ver_f = partial(_round, HEIGHT_DIGITS_FOR_ROUNDING)
 
-    hor_ver = tuple(map(round_hor_f, transformer.transform(*val_epoch)[0:target_dim]))
+    hor_ver = tuple(map(round_hor_f, transformer.transform(*val_epoch)[0:target_dim]))  # type: ignore
 
     pos_2d = Position2D(*hor_ver[:2])
 

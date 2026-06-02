@@ -42,11 +42,11 @@ class ProblemResponse(Response):
         *args,  # noqa: ANN002
         debug: bool = False,
         **kwargs,  # noqa: ANN003
-    ) -> None:  # type: ignore
+    ) -> None:
         self.debug: bool = debug
         super().__init__(*args, **kwargs)
 
-    def init_headers(self: "ProblemResponse", headers: Mapping[str, str] | None = None) -> None:  # type: ignore
+    def init_headers(self: "ProblemResponse", headers: Mapping[str, str] | None = None) -> None:
         h = dict(headers) if headers else {}
         if hasattr(self, "problem") and self.problem.headers:
             h.update(self.problem.headers)
@@ -108,6 +108,8 @@ class ProblemError(Exception):
     post-initialization, but nothing prevents you from doing so if you need
     more granular control over how/when values are set.
     """
+
+    __hash__ = Exception.__hash__
 
     def __init__(
         self: "ProblemError",
@@ -271,8 +273,8 @@ def from_data_validation_error(exc: DataValidationError) -> ProblemError:
         title=exc.title,
         status=400,
         detail=str(exc),
-        **extra,
-        **exc.extra,  # type: ignore
+        **extra,  # type: ignore
+        **exc.extra,
     )
 
 
@@ -286,7 +288,7 @@ def from_not_found_error(exc: NotFoundError) -> ProblemError:
         title=exc.title,
         status=404,
         detail=str(exc),
-        **extra,  # type: ignore
+        **extra,
     )
 
 
@@ -513,7 +515,7 @@ def register(
     #         )
     #         return app.openapi_schema.set
 
-    #     app.openapi = wrap_openapi  # type: ignore
+    #     app.openapi = wrap_openapi
 
 
 class ProblemMiddleware:
