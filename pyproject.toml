@@ -10,12 +10,12 @@ classifiers = [
 ]
 readme = { file = "./README.md", content-type = "text/markdown" }
 dependencies = [
-    "fastapi[all]==0.136.3",
-    "uvicorn==0.48.0",
+    "fastapi[all]==0.141.1",
+    "uvicorn==0.52.3",
     "pyyaml == 6.0.3",
     "geojson_pydantic == 1.2.0", # TODO: 2.x had breaking changes, see https://github.com/developmentseed/geojson-pydantic/blob/main/CHANGELOG.md#200---2025-05-05
     "pyproj == 3.7.2",
-    "pydantic-settings==2.14.1",
+    "pydantic-settings==2.15.0",
     "email-validator == 2.3.0",
     "geodense ~= 2.0.2",
     "python-json-logger>=4.0.0",
@@ -29,9 +29,9 @@ dev= [
     "prek>=0.4.3",
     "ruff>=0.15.15",
     "yamllint>=1.35.1",
-    "coverage == 7.14.1",
+    "coverage==7.15.4",
     "ty>=0.0.42",
-    "pytest == 9.0.3",
+    "pytest==9.1.1",
     "ruff == 0.15.15",
     "types-ujson == 5.10.0.20250822",
     "types-PyYAML == 6.0.12.20260518",
