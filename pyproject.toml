@@ -20,6 +20,7 @@ dependencies = [
     "geodense ~= 2.0.2",
     "python-json-logger>=4.0.0",
     "orjson == 3.13.0",
+    "numpy == 2.4.6",
 ]
 requires-python = ">=3.12"
 dynamic = ["version"]
