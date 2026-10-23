@@ -1,5 +1,10 @@
 # Performance Improvement Plan (profiled): numpy, orjson & pyogrio
 
+> **Implementation status (branch `perf/transform-improvements`):** Steps 1, 2a,
+> 3 and 4 are implemented and committed. Step 2b (geodense deep-copy) is
+> deferred to the geodense project. Step 5 (pyogrio) dropped. Measured end-to-end
+> gains are recorded in the "Measured results" section near the end.
+
 Investigation into speeding up `POST /transform` for bulk GeoJSON. **This version
 is backed by profiling data** (cProfile + micro-benchmarks) collected on this
 machine. The profiling revised the original priorities significantly: the single
@@ -204,6 +209,32 @@ check is off by default (random bulk coords fail the 200m check); pass
 4. Step 4 (numpy) — guard with `pytest tests -k validation`.
 5. Full suite: `pytest tests`; lint/type: `prek run -a`, `ruff`, `ty`.
 6. Re-profile and record before/after numbers here.
+
+## Measured results (implemented: Steps 1, 2a, 3, 4)
+
+End-to-end A/B via `scripts/benchmark_e2e.py` (full HTTP pipeline through
+`TestClient`, RD → WGS84, density-check off). "Before" = base commit `cf77735`
+run with its source on `PYTHONPATH`; "after" = branch `perf/transform-improvements`
+(commits for Steps 1→4). Same host, 12–15 timed iters + 3 warmup.
+
+| scenario | coords | before median | after median | speedup |
+| --- | --- | --- | --- | --- |
+| large | 51,000 | 1808.7 ms | 1013.5 ms | **1.78x** |
+| xlarge | 121,000 | 3409.4 ms | 2507.8 ms | **1.36x** |
+| linestrings | 75,000 | 2187.8 ms | 1838.0 ms | **1.19x** |
+| many-points | 20,000 (1 pt/feature) | 2629.0 ms | 2467.8 ms | **1.07x** |
+
+Notes:
+- The shared host is noisy; medians move run-to-run. `min_ms` (best-case, least
+  noisy) shows the same direction: large ~1.27x, xlarge ~1.25x, linestrings ~1.07x.
+- **many-points** (20k single-Point features) is roughly break-even: each
+  geometry holds a 1-element array, so numpy batching barely helps and its
+  array-build/flatten-rebuild overhead nearly cancels the gain. The Step-1 axis
+  caching keeps it net-positive. A future optimization could batch transform
+  across the whole FeatureCollection (one PROJ call per request) to benefit this
+  case — noted below.
+- Correctness held throughout: 653 tests pass, incl. 594 exact-coordinate
+  `test_validation.py` cases; `ruff` and `ty` clean.
 
 ## Open questions
 
