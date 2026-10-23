@@ -529,7 +529,8 @@ async def post_transform(  # noqa: ANN201, PLR0913
     else:
         if density_check:
             try:  # raises GeodenseError when all geometries in body are (multi)point
-                d_body = copy.deepcopy(body)
+                # max_segment_deviation path sets body.bbox in place (request_body_within_valid_bbox)
+                d_body = copy.deepcopy(body) if max_segment_deviation is not None else body
                 fc_report = density_check_request_body(d_body, s_crs, max_segment_deviation, max_segment_length, epoch)
                 result = DensityCheckReport.from_fc_report(fc_report)
                 if result.check_result:
