@@ -311,14 +311,17 @@ def get_transform_crs_fun(
 
         # note transformers are injected in transform_compound_crs so they are instantiated only once
         _transform_compound_crs = partial(
-            transform_compound_crs, h_transformer, v_transformer, target_crs, precision, epoch
+            transform_compound_crs, h_transformer, v_transformer, len(target_crs.axis_info), precision, epoch
         )
         return _transform_compound_crs
     else:
         transformer = get_transformer(source_crs, target_crs, epoch)
+        if transformer.target_crs is None:
+            raise ValueError("transformer.target_crs is None")
+        target_dim = len(transformer.target_crs.axis_info)
         # note transformer is injected in transform_crs is instantiated once
         # creating transformers is expensive
-        _transform_crs = partial(transform_crs, transformer, precision, epoch)
+        _transform_crs = partial(transform_crs, transformer, target_dim, precision, epoch)
         return _transform_crs
 
 
@@ -332,12 +335,11 @@ def _round(precision: int | None, val: float) -> float | int:
 def transform_compound_crs(  # noqa: PLR0913
     hor_transformer: Transformer,
     ver_transformer: Transformer,
-    target_crs: CRS,
+    target_dim: int,
     precision: int | None,
     epoch: float | None,
     input_pos: Position,
 ) -> Position:
-    target_dim = len(target_crs.axis_info)
     val_epoch = tuple([*input_pos, float(epoch)]) if epoch is not None else tuple([*input_pos])
 
     round_hor_f = partial(_round, precision)
@@ -373,16 +375,11 @@ def transform_compound_crs(  # noqa: PLR0913
 
 def transform_crs(
     transformer: Transformer,
+    target_dim: int,
     precision: int | None,
     epoch: float | None,
     input_pos: Position,
 ) -> Position:
-    if (
-        transformer.target_crs is None
-    ):  # check required for retreiving axis_info, otherwise mypy error -> transformer.target_crs: CRS | None
-        raise ValueError("transformer.target_crs is None")
-    target_dim = len(transformer.target_crs.axis_info)
-
     # TODO: fix epoch handling, should only be added in certain cases
     # when one of the src or tgt crs has a dynamic time component
     # or the transformation used has a datetime component
