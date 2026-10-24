@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import math
 import re
-from functools import partial
 from importlib import resources as impresources
 from importlib.metadata import version
 from typing import Any, cast
@@ -42,7 +41,7 @@ from coordinate_transformation_api.crs_transform import (
     get_coordinate_from_geometry,
     get_precision,
     get_transform_crs_fun,
-    mutate_geom_coordinates,
+    get_transform_geom_fun,
 )
 from coordinate_transformation_api.models import (
     Crs as AvailableCrs,
@@ -165,8 +164,7 @@ def crs_transform(
     t_crs: CRS,
     epoch: float | None = None,
 ) -> GeojsonObject:
-    t_callback = get_transform_crs_fun(s_crs, t_crs, epoch=epoch)
-    crs_transform_fun = partial(mutate_geom_coordinates, t_callback)
+    crs_transform_fun = get_transform_geom_fun(s_crs, t_crs, epoch=epoch)
     body_t = traverse_geojson_geometries(body, crs_transform_fun, update_bbox)  # type: ignore
 
     if isinstance(body_t, CrsFeatureCollection):

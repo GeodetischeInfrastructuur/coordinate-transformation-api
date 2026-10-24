@@ -5,6 +5,7 @@ from importlib import resources as impresources
 from itertools import chain
 from typing import Any, cast
 
+import numpy as np
 import yaml
 from geodense.lib import (
     GeojsonObject,
@@ -311,14 +312,17 @@ def get_transform_crs_fun(
 
         # note transformers are injected in transform_compound_crs so they are instantiated only once
         _transform_compound_crs = partial(
-            transform_compound_crs, h_transformer, v_transformer, target_crs, precision, epoch
+            transform_compound_crs, h_transformer, v_transformer, len(target_crs.axis_info), precision, epoch
         )
         return _transform_compound_crs
     else:
         transformer = get_transformer(source_crs, target_crs, epoch)
+        if transformer.target_crs is None:
+            raise ValueError("transformer.target_crs is None")
+        target_dim = len(transformer.target_crs.axis_info)
         # note transformer is injected in transform_crs is instantiated once
         # creating transformers is expensive
-        _transform_crs = partial(transform_crs, transformer, precision, epoch)
+        _transform_crs = partial(transform_crs, transformer, target_dim, precision, epoch)
         return _transform_crs
 
 
@@ -332,12 +336,11 @@ def _round(precision: int | None, val: float) -> float | int:
 def transform_compound_crs(  # noqa: PLR0913
     hor_transformer: Transformer,
     ver_transformer: Transformer,
-    target_crs: CRS,
+    target_dim: int,
     precision: int | None,
     epoch: float | None,
     input_pos: Position,
 ) -> Position:
-    target_dim = len(target_crs.axis_info)
     val_epoch = tuple([*input_pos, float(epoch)]) if epoch is not None else tuple([*input_pos])
 
     round_hor_f = partial(_round, precision)
@@ -373,16 +376,11 @@ def transform_compound_crs(  # noqa: PLR0913
 
 def transform_crs(
     transformer: Transformer,
+    target_dim: int,
     precision: int | None,
     epoch: float | None,
     input_pos: Position,
 ) -> Position:
-    if (
-        transformer.target_crs is None
-    ):  # check required for retreiving axis_info, otherwise mypy error -> transformer.target_crs: CRS | None
-        raise ValueError("transformer.target_crs is None")
-    target_dim = len(transformer.target_crs.axis_info)
-
     # TODO: fix epoch handling, should only be added in certain cases
     # when one of the src or tgt crs has a dynamic time component
     # or the transformation used has a datetime component
@@ -414,3 +412,158 @@ def transform_crs(
     if any([math.isinf(x) for x in output_pos]):
         raise InfValCoordinateError("Coordinates contain inf val")
     return output_pos
+
+
+def _is_position(coords: Any) -> bool:  # noqa: ANN401
+    return hasattr(coords, "latitude") and hasattr(coords, "longitude")
+
+
+def flatten_geojson_coordinates(coords: Any, out: list[Position] | None = None) -> list[Position]:  # noqa: ANN401
+    """Flatten nested GeoJSON coordinates into a flat list of positions (same order as traverse_geojson_coordinates)"""
+    if out is None:
+        out = []
+    if _is_position(coords):
+        out.append(coords)
+    else:
+        for c in coords:
+            flatten_geojson_coordinates(c, out)
+    return out
+
+
+def _rebuild_geojson_coordinates(coords: Any, positions: Any) -> Any:  # noqa: ANN401
+    if _is_position(coords):
+        return next(positions)
+    return [_rebuild_geojson_coordinates(c, positions) for c in coords]
+
+
+def _transform_input_columns(positions: list[Position], epoch: float | None, compound: bool) -> list[np.ndarray] | None:
+    """Build transformer input columns, mirrors build_input_coord / compound val_epoch. None if dims inconsistent"""
+    dim = len(positions[0])
+    if any(len(p) != dim for p in positions):
+        return None
+    arr = np.array(positions, dtype=np.float64).reshape(len(positions), dim)
+    cols = [arr[:, i] for i in range(dim)]
+    if compound:
+        if epoch is not None:
+            cols.append(np.full(len(positions), float(epoch)))
+    elif dim == TWO_DIMENSIONAL and epoch is not None:
+        cols.append(np.zeros(len(positions)))
+        cols.append(np.full(len(positions), float(epoch)))
+    elif dim == THREE_DIMENSIONAL and epoch is not None:
+        cols.append(np.full(len(positions), float(epoch)))
+    return cols
+
+
+def transform_geom_coordinates_vectorized(
+    transformer: Transformer,
+    target_dim: int,
+    precision: int | None,
+    epoch: float | None,
+    coordinates: Any,  # noqa: ANN401
+) -> Any:  # noqa: ANN401
+    """Transform all coordinates of a geometry in a single pyproj call (non-compound CRS)"""
+    positions = flatten_geojson_coordinates(coordinates)
+    if not positions:
+        return traverse_geojson_coordinates(lambda p: p, coordinates)
+    cols = _transform_input_columns(positions, epoch, compound=False)
+    if cols is None:
+        _scalar = partial(transform_crs, transformer, target_dim, precision, epoch)
+        return traverse_geojson_coordinates(_scalar, coordinates)
+
+    outs = [o.tolist() for o in transformer.transform(*cols)[0:target_dim]]  # type: ignore
+    round_hor_f = partial(_round, precision)
+    round_ver_f = partial(_round, HEIGHT_DIGITS_FOR_ROUNDING)
+    results: list[Position] = []
+    for vals in zip(*outs, strict=True):
+        hor_ver = tuple(map(round_hor_f, vals))
+        output_pos: Position = Position2D(*hor_ver[:2])
+        if len(hor_ver) >= THREE_DIMENSIONAL:
+            height = round_ver_f(hor_ver[2])
+            if not math.isinf(height):
+                output_pos = Position3D(*output_pos, height)
+        if any(math.isinf(x) for x in output_pos):
+            raise InfValCoordinateError("Coordinates contain inf val")
+        results.append(output_pos)
+    return _rebuild_geojson_coordinates(coordinates, iter(results))
+
+
+def transform_geom_coordinates_compound_vectorized(  # noqa: PLR0913
+    hor_transformer: Transformer,
+    ver_transformer: Transformer,
+    target_dim: int,
+    precision: int | None,
+    epoch: float | None,
+    coordinates: Any,  # noqa: ANN401
+) -> Any:  # noqa: ANN401
+    """Transform all coordinates of a geometry in batched pyproj calls (compound CRS)"""
+    positions = flatten_geojson_coordinates(coordinates)
+    if not positions:
+        return traverse_geojson_coordinates(lambda p: p, coordinates)
+    cols = _transform_input_columns(positions, epoch, compound=True)
+    if cols is None:
+        _scalar = partial(transform_compound_crs, hor_transformer, ver_transformer, target_dim, precision, epoch)
+        return traverse_geojson_coordinates(_scalar, coordinates)
+
+    round_hor_f = partial(_round, precision)
+    round_ver_f = partial(_round, HEIGHT_DIGITS_FOR_ROUNDING)
+    hor_outs = [o.tolist() for o in hor_transformer.transform(*cols)]  # type: ignore
+    ver_outs = None
+    if target_dim == THREE_DIMENSIONAL:
+        ver_outs = [o.tolist() for o in ver_transformer.transform(*cols)]  # type: ignore
+
+    results: list[Position] = []
+    for i in range(len(positions)):
+        hor = tuple(map(round_hor_f, [o[i] for o in hor_outs]))[:2]
+        output_pos: Position = Position2D(*hor[:2])
+        if ver_outs is not None:
+            ver = tuple(map(round_ver_f, [o[i] for o in ver_outs]))
+            if len(ver) >= THREE_DIMENSIONAL and not math.isinf(ver[2]):
+                output_pos = Position3D(*output_pos, ver[2])
+        if any(math.isinf(x) for x in output_pos):
+            raise InfValCoordinateError("Coordinates contain inf val")
+        results.append(output_pos)
+    return _rebuild_geojson_coordinates(coordinates, iter(results))
+
+
+def get_transform_geom_fun(
+    source_crs: CRS,
+    target_crs: CRS,
+    precision: int | None = None,
+    epoch: float | None = None,
+) -> Callable[[GeojsonGeomNoGeomCollection], None]:
+    """Returns a callback that transforms a geometry's coordinates in place, using vectorized pyproj calls"""
+    if precision is None:
+        precision = get_precision(target_crs)
+
+    check_axis(source_crs, target_crs)
+    if exclude_transformation(
+        "{}:{}".format(*source_crs.to_authority()),
+        "{}:{}".format(*target_crs.to_authority()),
+    ):
+        raise TransformationNotPossibleError(source_crs, target_crs, "Transformation Excluded")
+
+    if target_crs is not None and source_crs is not target_crs and (target_crs.is_compound or source_crs.is_compound):
+        target_crs_horizontal = target_crs.to_2d()
+        try:
+            h_transformer = get_transformer(source_crs, target_crs_horizontal, epoch)
+            v_transformer = get_transformer(source_crs, target_crs, epoch)
+        except TransformationNotPossibleError as e:
+            raise TransformationNotPossibleError(source_crs, target_crs, reason=e.reason) from e
+        compound_dim = len(target_crs.axis_info)
+
+        def _mutate_compound(geom: GeojsonGeomNoGeomCollection) -> None:
+            geom.coordinates = transform_geom_coordinates_compound_vectorized(
+                h_transformer, v_transformer, compound_dim, precision, epoch, geom.coordinates
+            )
+
+        return _mutate_compound
+
+    tf = get_transformer(source_crs, target_crs, epoch)
+    if tf.target_crs is None:
+        raise ValueError("transformer.target_crs is None")
+    target_dim = len(tf.target_crs.axis_info)
+
+    def _mutate(geom: GeojsonGeomNoGeomCollection) -> None:
+        geom.coordinates = transform_geom_coordinates_vectorized(tf, target_dim, precision, epoch, geom.coordinates)
+
+    return _mutate
