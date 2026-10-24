@@ -13,7 +13,7 @@ dependencies = [
     "fastapi[all]==0.162.0",
     "uvicorn==0.54.0",
     "pyyaml == 6.0.3",
-    "geojson_pydantic == 1.2.0", # TODO: 2.x had breaking changes, see https://github.com/developmentseed/geojson-pydantic/blob/main/CHANGELOG.md#200---2025-05-05
+    "geojson_pydantic == 1.2.0",
     "pyproj == 3.7.2",
     "pydantic-settings==2.16.1",
     "email-validator == 2.3.0",
@@ -25,6 +25,8 @@ dependencies = [
 requires-python = ">=3.12"
 dynamic = ["version"]
 
+[tool.uv.sources]
+pyproj = { url = "https://github.com/GeodetischeInfrastructuur/transformations/releases/download/9.7.1-post1-rc17/pyproj-3.7.2.post1-cp312-cp312-linux_x86_64.whl" }
 
 [dependency-groups]
 dev= [
