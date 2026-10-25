@@ -108,7 +108,7 @@ class AppSettings(BaseSettings):
 
     @classmethod
     def settings_customise_sources(
-        cls: "AppSettings",
+        cls,
         settings_cls: type[BaseSettings],
         init_settings: PydanticBaseSettingsSource,  # noqa: ARG003
         env_settings: PydanticBaseSettingsSource,  # noqa: ARG003
