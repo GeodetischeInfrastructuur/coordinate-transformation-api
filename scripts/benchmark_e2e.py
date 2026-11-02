@@ -45,6 +45,8 @@ for _mw in app.user_middleware:
 # RD New (EPSG:28992) -> WGS84 (EPSG:4326): the canonical NSGI transform.
 SOURCE_CRS = "EPSG:28992"
 TARGET_CRS = "EPSG:4326"
+HTTP_OK = 200
+MIN_SAMPLES_FOR_QUANTILES = 2
 
 # Rough RD bounding box for the Netherlands so coordinates are in-domain.
 RD_X_RANGE = (10000.0, 280000.0)
@@ -92,7 +94,7 @@ def _make_geometry(rng: random.Random, scenario: Scenario) -> dict:
 
 def build_payload(scenario: Scenario, seed: int = 42) -> tuple[bytes, int]:
     """Return (serialized FeatureCollection bytes, coordinate count)."""
-    rng = random.Random(seed)
+    rng = random.Random(seed)  # noqa: S311 - deterministic synthetic benchmark data, not security-sensitive
     features = []
     n_coords = 0
     for i in range(scenario.n_features):
@@ -140,7 +142,7 @@ class Result:
 
     @property
     def p95_ms(self) -> float:
-        if len(self.samples_ms) < 2:
+        if len(self.samples_ms) < MIN_SAMPLES_FOR_QUANTILES:
             return self.samples_ms[0]
         return statistics.quantiles(self.samples_ms, n=20)[-1]
 
@@ -188,19 +190,17 @@ def run_scenario(
         resp = client.post(url, content=payload, headers=headers)
         status = resp.status_code
 
-    if status != 200:
+    if status != HTTP_OK:
         # surface the server error so the benchmark fails loudly
         resp = client.post(url, content=payload, headers=headers)
-        raise RuntimeError(
-            f"scenario {scenario.name!r} returned HTTP {resp.status_code}: {resp.text[:500]}"
-        )
+        raise RuntimeError(f"scenario {scenario.name!r} returned HTTP {resp.status_code}: {resp.text[:500]}")
 
     samples_ms: list[float] = []
     for _ in range(iterations):
         t0 = time.perf_counter()
         resp = client.post(url, content=payload, headers=headers)
         samples_ms.append((time.perf_counter() - t0) * 1000.0)
-        if resp.status_code != 200:
+        if resp.status_code != HTTP_OK:
             raise RuntimeError(f"unexpected HTTP {resp.status_code} during timing")
 
     return Result(

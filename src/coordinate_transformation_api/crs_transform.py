@@ -122,7 +122,7 @@ def get_coordinate_from_geometry(
     return list(chain(explode(item.coordinates)))
 
 
-def explode(coords: Any) -> Generator[Any, Any, None]:  # noqa: ANN401
+def explode(coords: Any) -> Generator[Any, Any]:  # noqa: ANN401
     """Explode a GeoJSON geometry's coordinates object and yield coordinate tuples.
     As long as the input is conforming, the type of the geometry doesn't matter.
     Source: https://gis.stackexchange.com/a/90554
@@ -239,12 +239,10 @@ def build_input_coord(coord: CoordinatesType, epoch: float | None) -> Coordinate
     # The input_coord == coord that are given. When an epoch is provided with a 3D coord
     # this is added or the value None is given for any other. Note: with 2D the additional None
     # is the height. But this doesn't influence the result, because it's None.
-    input_coord = tuple(
-        [
-            *coord,
-            (float(epoch) if len(coord) == THREE_DIMENSIONAL and epoch is not None else None),
-        ]
-    )
+    input_coord = tuple([
+        *coord,
+        (float(epoch) if len(coord) == THREE_DIMENSIONAL and epoch is not None else None),
+    ])
 
     return input_coord  # type: ignore
 
@@ -366,9 +364,9 @@ def transform_compound_crs(  # noqa: PLR0913
             # height coordinate dropped
             pass
 
-    if any(
-        [math.isinf(x) for x in output_pos]
-    ):  # checks only positional coordinates, not height. since check if h isinf is already done, and dropped if isinf
+    if any([
+        math.isinf(x) for x in output_pos
+    ]):  # checks only positional coordinates, not height. since check if h isinf is already done, and dropped if isinf
         raise InfValCoordinateError("Coordinates contain inf val")
 
     return output_pos

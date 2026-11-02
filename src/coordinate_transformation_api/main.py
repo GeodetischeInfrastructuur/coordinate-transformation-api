@@ -542,9 +542,10 @@ async def post_transform(  # noqa: ANN201, PLR0913
                 fc_report = density_check_request_body(d_body, s_crs, max_segment_deviation, max_segment_length, epoch)
                 result = DensityCheckReport.from_fc_report(fc_report)
                 if result.check_result:
-                    response_headers = set_response_headers(
-                        (DENSITY_CHECK_RESULT_HEADER, DensityCheckResult.success.value)
-                    )
+                    response_headers = set_response_headers((
+                        DENSITY_CHECK_RESULT_HEADER,
+                        DensityCheckResult.success.value,
+                    ))
                 else:
                     val_name = "max_segment_length"
                     val = max_segment_length

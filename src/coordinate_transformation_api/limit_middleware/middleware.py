@@ -18,7 +18,7 @@ class ContentSizeExceededError(Exception):
 class TimeoutMiddleware(BaseHTTPMiddleware):
     #  based on https://github.com/encode/starlette/issues/890#issuecomment-926062125
     def __init__(
-        self: "TimeoutMiddleware",
+        self: TimeoutMiddleware,
         app: ASGIApp,
         dispatch: DispatchFunction | None = None,
         timeout_seconds: int | None = None,
@@ -26,7 +26,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
         BaseHTTPMiddleware.__init__(self, app, dispatch=dispatch)
         self.timeout_seconds = timeout_seconds
 
-    async def dispatch(self: "TimeoutMiddleware", request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(self: TimeoutMiddleware, request: Request, call_next: RequestResponseEndpoint) -> Response:
         try:
             response = await asyncio.wait_for(call_next(request), timeout=self.timeout_seconds)
         except TimeoutError:
@@ -48,7 +48,7 @@ Message = typing.MutableMapping[str, typing.Any]
 class ContentSizeLimitMiddleware:
     # based on https://github.com/steinnes/content-size-limit-asgi/tree/master
     def __init__(
-        self: "ContentSizeLimitMiddleware",
+        self: ContentSizeLimitMiddleware,
         app: ASGIApp,
         max_content_size: int | None = None,
     ) -> None:
@@ -56,7 +56,7 @@ class ContentSizeLimitMiddleware:
         self.max_content_size = max_content_size
         self.received = 0
 
-    def receive_wrapper(self: "ContentSizeLimitMiddleware", receive: Receive) -> Callable:
+    def receive_wrapper(self: ContentSizeLimitMiddleware, receive: Receive) -> Callable:
         received = 0
 
         async def inner() -> Message:
@@ -76,7 +76,7 @@ class ContentSizeLimitMiddleware:
 
         return inner
 
-    async def __call__(self: "ContentSizeLimitMiddleware", scope: Scope, receive: Receive, send: Send) -> None:
+    async def __call__(self: ContentSizeLimitMiddleware, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return

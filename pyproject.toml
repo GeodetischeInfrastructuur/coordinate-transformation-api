@@ -6,27 +6,31 @@ license = { text = "MIT" }
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.15",
 ]
 readme = { file = "./README.md", content-type = "text/markdown" }
 dependencies = [
     "fastapi[all]==0.162.0",
     "uvicorn==0.54.0",
     "pyyaml == 6.0.3",
+<<<<<<< HEAD
     "geojson_pydantic == 1.2.0",
     "pyproj == 3.7.2",
     "pydantic-settings==2.16.1",
+=======
+    "geojson-pydantic>=2,<3",
+    "pyproj @ https://github.com/GeodetischeInfrastructuur/transformations/releases/download/2.2.0-rc2-proj9.7.1/pyproj-3.7.2+nsgi2.2.0rc2-cp315-cp315-linux_x86_64.whl",
+    "pydantic-settings==2.14.1",
+>>>>>>> b26d895 (update pyproj to new rc + fix ruff check findings)
     "email-validator == 2.3.0",
-    "geodense ~= 2.0.2",
+    "geodense @ https://github.com/GeodetischeInfrastructuur/geodense/releases/download/3.0.0rc3/geodense-3.0.0rc3-py3-none-any.whl",
+    "shapely >= 2.1.0",
     "python-json-logger>=4.0.0",
     "orjson == 3.13.0",
     "numpy == 2.4.6",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.15"
 dynamic = ["version"]
-
-[tool.uv.sources]
-pyproj = { url = "https://github.com/GeodetischeInfrastructuur/transformations/releases/download/9.7.1-post1-rc17/pyproj-3.7.2.post1-cp312-cp312-linux_x86_64.whl" }
 
 [dependency-groups]
 dev= [
@@ -48,6 +52,9 @@ dev= [
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [project.scripts]
 ct-api = "coordinate_transformation_api.main:main"
 
@@ -56,6 +63,7 @@ source = "vcs"
 
 
 [tool.ruff]
+preview = true
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -86,9 +94,10 @@ exclude = [
 line-length = 120
 
 # Allow unused variables when underscore-prefixed.
-target-version = "py312"
+target-version = "py315"
 
 [tool.ruff.lint]
+explicit-preview-rules = true
 
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 

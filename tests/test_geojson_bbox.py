@@ -16,6 +16,7 @@ def test_feature_bbox():
     with open("tests/data/feature-bbox.json") as f:
         data = json.load(f)
         feature = Feature(**data)
+        original = feature.model_dump(mode="python", round_trip=True)
 
         feature_t = crs_transform(
             feature,
@@ -23,9 +24,10 @@ def test_feature_bbox():
             CRS.from_authority(*["EPSG", "4326"]),
         )
 
-        feature_dict = json.loads(feature.model_dump_json())
+        feature_dict = json.loads(feature_t.model_dump_json())
         # check if input is actually transformed
-        assert feature_t != feature
+        assert feature_t is feature
+        assert feature_t.model_dump(mode="python", round_trip=True) != original
         with not_raises(
             ValidationError,
             "could not convert output of transform_request_body to type Feature: {exc}",

@@ -38,7 +38,7 @@ class ProblemResponse(Response):
     media_type: str = "application/problem+json"
 
     def __init__(
-        self: "ProblemResponse",
+        self: ProblemResponse,
         *args,  # noqa: ANN002
         debug: bool = False,
         **kwargs,  # noqa: ANN003
@@ -46,14 +46,14 @@ class ProblemResponse(Response):
         self.debug: bool = debug
         super().__init__(*args, **kwargs)
 
-    def init_headers(self: "ProblemResponse", headers: Mapping[str, str] | None = None) -> None:
+    def init_headers(self: ProblemResponse, headers: Mapping[str, str] | None = None) -> None:
         h = dict(headers) if headers else {}
         if hasattr(self, "problem") and self.problem.headers:
             h.update(self.problem.headers)
 
         super().init_headers(h)
 
-    def render(self: "ProblemResponse", content: Any) -> bytes:  # noqa: ANN401
+    def render(self: ProblemResponse, content: Any) -> bytes:  # noqa: ANN401
         """Render the provided content as an RFC-7807 Problem JSON-serialized bytes."""
         if isinstance(content, ProblemError):
             p = content
@@ -112,7 +112,7 @@ class ProblemError(Exception):
     __hash__ = Exception.__hash__
 
     def __init__(
-        self: "ProblemError",
+        self: ProblemError,
         type: str | None = None,
         title: str | None = None,
         status: int | None = None,
@@ -132,7 +132,7 @@ class ProblemError(Exception):
         # making it easier for humans to read while debugging.
         self.debug: bool = False
 
-    def to_bytes(self: "ProblemError") -> bytes:
+    def to_bytes(self: ProblemError) -> bytes:
         """Render the Problem as JSON-serialized bytes.
 
         Returns:
@@ -154,7 +154,7 @@ class ProblemError(Exception):
                 separators=(",", ":"),
             ).encode("utf-8")
 
-    def to_dict(self: "ProblemError") -> dict[str, Any]:
+    def to_dict(self: ProblemError) -> dict[str, Any]:
         """Get a dictionary representation of the Problem response.
 
         Returns:
@@ -180,13 +180,13 @@ class ProblemError(Exception):
             d["instance"] = str(self.instance)
         return d
 
-    def __str__(self: "ProblemError") -> str:
+    def __str__(self: ProblemError) -> str:
         return str(f"Problem:<{self.to_dict()}>")
 
-    def __repr__(self: "ProblemError") -> str:
+    def __repr__(self: ProblemError) -> str:
         return str(self)
 
-    def __eq__(self: "ProblemError", other: object) -> bool:
+    def __eq__(self: ProblemError, other: object) -> bool:
         if not isinstance(other, ProblemError):
             return False
         return self.__dict__ == other.__dict__
@@ -528,7 +528,7 @@ class ProblemMiddleware:
     """
 
     def __init__(
-        self: "ProblemMiddleware",
+        self: ProblemMiddleware,
         app: ASGIApp,
         debug: bool = False,
         pre_hooks: Sequence[PreHook] | None = None,
@@ -548,7 +548,7 @@ class ProblemMiddleware:
         )
 
     # See: starlette.middleware.errors.ServerErrorMiddleware
-    async def __call__(self: "ProblemMiddleware", scope: Scope, receive: Receive, send: Send) -> None:
+    async def __call__(self: ProblemMiddleware, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return
