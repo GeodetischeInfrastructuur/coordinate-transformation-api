@@ -1,6 +1,6 @@
 # copied from https://github.com/vapor-ware/fastapi-rfc7807
-import asyncio
 import http
+import inspect
 import json
 import logging
 from collections.abc import Awaitable, Callable, Mapping, Sequence
@@ -402,7 +402,7 @@ async def exec_hooks(
     """
     if hooks:
         for hook in hooks:
-            if asyncio.iscoroutinefunction(hook):
+            if inspect.iscoroutinefunction(hook):
                 await hook(*args)
             else:
                 hook(*args)
