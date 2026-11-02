@@ -54,11 +54,12 @@ def test_bbox_transformed():
     with open("tests/data/geometry.json") as f:
         data = json.load(f)
         geometry = parse_geometry_obj(data)
+        original_bbox = geometry.bbox
         geometry_t = crs_transform(geometry, str_to_crs("EPSG:28992"), str_to_crs("EPSG:4326"))
-        assert geometry.bbox is not None
+        assert original_bbox is not None
         assert geometry_t.bbox is not None
-        assert len(geometry.bbox) == len(geometry_t.bbox)
-        assert geometry.bbox != geometry_t.bbox
+        assert len(original_bbox) == len(geometry_t.bbox)
+        assert original_bbox != geometry_t.bbox
 
 
 # cs2cs -f %.4f EPSG:28992 EPSG:4326 <<<"138871.518881731899455 597389.993749326560646"
@@ -69,8 +70,13 @@ def test_transform_geometry_crs84_is_epsg4326():
         data = json.load(f)
         geometry = parse_geometry_obj(data)
 
-        geometry_t_4326 = crs_transform(geometry, str_to_crs("EPSG:28992"), str_to_crs("EPSG:4326"))
-        geometry_t_crs84 = crs_transform(geometry, str_to_crs("EPSG:28992"), str_to_crs("OGC:CRS84"))
+        # geodense v3 transforms in place, so each comparison needs its own input.
+        geometry_t_4326 = crs_transform(
+            geometry.model_copy(deep=True), str_to_crs("EPSG:28992"), str_to_crs("EPSG:4326")
+        )
+        geometry_t_crs84 = crs_transform(
+            geometry.model_copy(deep=True), str_to_crs("EPSG:28992"), str_to_crs("OGC:CRS84")
+        )
 
         # check if input is actually transformed
         assert geometry_t_4326.model_dump_json() != geometry.model_dump_json()
@@ -98,14 +104,16 @@ def test_transform_geojson_objects(geojson_path, object_type):
         data = json.load(f)
 
         geojson_obj = parse_geometry_obj(data) if object_type is _GeometryBase else object_type(**data)
+        original = geojson_obj.model_dump(mode="python", round_trip=True)
 
         geojson_obj_t = crs_transform(geojson_obj, str_to_crs("EPSG:28992"), str_to_crs("EPSG:4326"))
         geojson_obj_t_dict = json.loads(geojson_obj_t.model_dump_json())
 
         if object_type is CrsFeatureCollection:
-            assert geojson_obj_t.crs.properties.name != geojson_obj.crs.properties.name
+            assert geojson_obj_t.get_crs_auth_code() == "EPSG:4326"
         # check if input is actually transformed
-        assert geojson_obj_t != geojson_obj
+        assert geojson_obj_t is geojson_obj
+        assert geojson_obj_t.model_dump(mode="python", round_trip=True) != original
 
         with not_raises(  # check if we can roundtrip the transformed object without exceptions
             ValidationError,
@@ -124,9 +132,13 @@ def test_2d_with_epoch():
     with open("tests/data/test_2d_with_epoch.json") as f:
         data = json.load(f)
         feature = Feature(**data)
-        feature_2d_org = crs_transform(feature, str_to_crs("EPSG:3857"), str_to_crs("EPSG:28992"))
-        feature_2d_2000 = crs_transform(feature, str_to_crs("EPSG:3857"), str_to_crs("EPSG:28992"), 2000)
-        feature_2d_2020 = crs_transform(feature, str_to_crs("EPSG:3857"), str_to_crs("EPSG:28992"), 2020)
+        feature_2d_org = crs_transform(feature.model_copy(deep=True), str_to_crs("EPSG:3857"), str_to_crs("EPSG:28992"))
+        feature_2d_2000 = crs_transform(
+            feature.model_copy(deep=True), str_to_crs("EPSG:3857"), str_to_crs("EPSG:28992"), 2000
+        )
+        feature_2d_2020 = crs_transform(
+            feature.model_copy(deep=True), str_to_crs("EPSG:3857"), str_to_crs("EPSG:28992"), 2020
+        )
 
         assert feature_2d_2000 != feature_2d_org
         assert feature_2d_2020 != feature_2d_org
@@ -165,9 +177,15 @@ def test_wm_epoch():
         data = json.load(f)
         feature = Feature(**data)
 
-        feature_2024 = crs_transform(feature, str_to_crs("EPSG:28992"), str_to_crs("EPSG:3857"), 2024)
-        feature_2010 = crs_transform(feature, str_to_crs("EPSG:28992"), str_to_crs("EPSG:3857"), 2010)
-        feature_epoch_none = crs_transform(feature, str_to_crs("EPSG:28992"), str_to_crs("EPSG:3857"))
+        feature_2024 = crs_transform(
+            feature.model_copy(deep=True), str_to_crs("EPSG:28992"), str_to_crs("EPSG:3857"), 2024
+        )
+        feature_2010 = crs_transform(
+            feature.model_copy(deep=True), str_to_crs("EPSG:28992"), str_to_crs("EPSG:3857"), 2010
+        )
+        feature_epoch_none = crs_transform(
+            feature.model_copy(deep=True), str_to_crs("EPSG:28992"), str_to_crs("EPSG:3857")
+        )
 
         assert feature_2024 != feature_2010
         assert feature_2010 != feature_epoch_none
