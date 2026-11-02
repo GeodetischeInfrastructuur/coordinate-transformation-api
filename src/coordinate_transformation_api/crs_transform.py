@@ -63,7 +63,7 @@ def get_shapely_objects(
     if hasattr(result, "__iter__"):
         for item in result:  # type: ignore
             if isinstance(item, list):
-                flat_result.append(ShpGeometryCollection(item))
+                flat_result.append(cast(ShapelyGeometry, ShpGeometryCollection(item)))
             else:
                 flat_result.append(item)
     else:
