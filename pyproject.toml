@@ -13,34 +13,27 @@ dependencies = [
     "fastapi[all]==0.162.0",
     "uvicorn==0.54.0",
     "pyyaml == 6.0.3",
-<<<<<<< HEAD
-    "geojson_pydantic == 1.2.0",
-    "pyproj == 3.7.2",
-    "pydantic-settings==2.16.1",
-=======
     "geojson-pydantic>=2,<3",
     "pyproj @ https://github.com/GeodetischeInfrastructuur/transformations/releases/download/2.2.0-rc2-proj9.7.1/pyproj-3.7.2+nsgi2.2.0rc2-cp315-cp315-linux_x86_64.whl",
-    "pydantic-settings==2.14.1",
->>>>>>> b26d895 (update pyproj to new rc + fix ruff check findings)
+    "pydantic-settings==2.16.2",
     "email-validator == 2.3.0",
     "geodense @ https://github.com/GeodetischeInfrastructuur/geodense/releases/download/3.0.0rc3/geodense-3.0.0rc3-py3-none-any.whl",
-    "shapely >= 2.1.0",
-    "python-json-logger>=4.0.0",
+    "shapely == 2.2.0",
+    "python-json-logger >=4.2.0",
     "orjson == 3.13.0",
-    "numpy == 2.4.6",
+    "numpy == 2.5.4",
 ]
 requires-python = ">=3.15"
 dynamic = ["version"]
 
 [dependency-groups]
 dev= [
-    "prek>=0.4.3",
-    "ruff>=0.15.15",
+    "prek>=0.5.9",
+    "ruff>=0.17.3",
     "yamllint>=1.35.1",
     "coverage==7.17.0",
-    "ty>=0.0.42",
-    "pytest==9.1.1",
-    "ruff == 0.15.15",
+    "ty>=0.0.95",
+    "pytest==9.2.0",
     "types-ujson == 5.10.0.20250822",
     "types-PyYAML == 6.0.12.20260518",
     "pytest-asyncio==1.4.1",
