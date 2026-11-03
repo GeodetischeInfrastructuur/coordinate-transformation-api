@@ -152,6 +152,7 @@ def exclude_transformation(source_crs_str: str, target_crs_str: str) -> bool:
 
 
 def needs_epoch(tf: Transformer) -> bool:
+    """Require an epoch for time-dependent operations, not merely a dynamic target datum."""
     # Currently the time-dependent & specific operation method code are hardcoded
     # These are extracted from the 'coordinate_operation_method' table in the proj.db
     static_coordinate_operation_methode_time_dependent = [
@@ -167,13 +168,6 @@ def needs_epoch(tf: Transformer) -> bool:
 
     has_epoch = False
 
-    if (
-        tf.target_crs is not None
-        and tf.target_crs.datum is not None
-        and tf.target_crs.datum.type_name == "Dynamic Geodetic Reference Frame"
-    ):
-        has_epoch = True
-
     if tf.operations is not None:
         for operation in tf.operations:
             if (
@@ -183,7 +177,8 @@ def needs_epoch(tf: Transformer) -> bool:
             ):  # fallback voor concatenated operations
                 has_epoch = True
 
-    return has_epoch
+    # Pipeline-only transformers may not expose individual operation metadata.
+    return has_epoch or "t_epoch=" in (tf.to_proj4() or "")
 
 
 def check_axis(s_crs: CRS, t_crs: CRS) -> None:
@@ -331,7 +326,7 @@ def _round(precision: int | None, val: float) -> float | int:
         return round(val, precision)
 
 
-def transform_compound_crs(  # noqa: PLR0913
+def transform_compound_crs(  # noqa: PLR0913, PLR0917
     hor_transformer: Transformer,
     ver_transformer: Transformer,
     target_dim: int,
@@ -485,7 +480,7 @@ def transform_geom_coordinates_vectorized(
     return _rebuild_geojson_coordinates(coordinates, iter(results))
 
 
-def transform_geom_coordinates_compound_vectorized(  # noqa: PLR0913
+def transform_geom_coordinates_compound_vectorized(  # noqa: PLR0913, PLR0917
     hor_transformer: Transformer,
     ver_transformer: Transformer,
     target_dim: int,
