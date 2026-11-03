@@ -155,13 +155,14 @@ unfixable = []
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 
-
-
-
-
 [tool.ty.src]
 exclude = ["tests"]
 
-
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
+
+[tool.uv]
+required-version = '>=0.13.6'
+cache-keys = [{ file = "pyproject.toml" }, { git = true }]
+exclude-newer = '8 days'
+exclude-newer-package = { certifi = false }
