@@ -783,16 +783,24 @@ components:
         $ref: '#/components/schemas/Epoch'
   parameters:
     acceptCrs:
-      description: 'Target coordinate reference system (CRS); Usage discouraged: use `target-crs` instead'
+      description: |
+        Target coordinate reference system (CRS). 
+        
+        <em>This header is ignored when a CRS is by the `target-crs` query parameter.</em>
       in: header
       name: accept-crs
+      deprecated: true
       required: false
       example: http://www.opengis.net/def/crs/EPSG/0/7931
       schema:
         $ref: '#/components/schemas/CrsHeaderEnum'
     contentCrs:
-      description: 'Source coordinate reference system (CRS); Usage discouraged: use `source-crs` instead'
+      description: |
+        Source coordinate reference system (CRS).
+        
+        <em>This header is ignored when a CRS is supplied in the request body or by the `source-crs` query parameter.</em>
       in: header
+      deprecated: true
       name: content-crs
       required: false
       example: http://www.opengis.net/def/crs/EPSG/0/7415
@@ -812,11 +820,11 @@ components:
         Run density-check on input before transformation. Will result in HTTP 400 response if the density-check fails. When set on `true` one of the following parameters needs to be set `max-segment-length` or `max-segment-deviation`
       in: query
       name: density-check
-      example: true
+      example: false
       required: false
       schema:
         type: boolean
-        default: true
+        default: false
     epochParam:
       description: Epoch of coordinates in source and target coordinate reference systems (CRSs). Leave empty for null transformation recommended for most applications.
       name: epoch
@@ -843,7 +851,9 @@ components:
         minimum: 200
     sourceCrs:
       description: |
-        Source coordinate reference system (CRS); NB: Overruled by CRS in request body (e.g. GeoJSON)
+        Source coordinate reference system (CRS). 
+        
+        <em>This query parameter is overridden by the CRS embedded in the request body (for example GeoJSON or CityJSON). When a body-level CRS is present, this value is ignored.</em>
       in: query
       name: source-crs
       example: EPSG:7415

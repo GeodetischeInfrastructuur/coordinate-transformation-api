@@ -429,7 +429,7 @@ async def density_check(  # noqa: ANN201
 
 
 @app.get("/transform")
-async def transform(  # noqa: PLR0913, ANN201
+async def transform(  # noqa: PLR0913, ANN201, PLR0917
     coordinates: Annotated[
         str,
         Query(alias="coordinates", pattern=r"^(-?\d+\.?\d*),(-?\d+\.?\d*)(,-?\d+\.?\d*)?$"),
@@ -497,7 +497,7 @@ async def transform(  # noqa: PLR0913, ANN201
     response_model=Feature | CrsFeatureCollection | Geometry | GeometryCollection | CityjsonV113,
     response_model_exclude_none=True,
 )
-async def post_transform(  # noqa: ANN201, PLR0913
+async def post_transform(  # noqa: ANN201, PLR0913, PLR0917
     body: Feature | CrsFeatureCollection | Geometry | GeometryCollection | CityjsonV113,
     source_crs: Annotated[CrsEnum | None, Query(alias="source-crs")] = None,
     target_crs: Annotated[CrsEnum | None, Query(alias="target-crs")] = None,
@@ -538,7 +538,7 @@ async def post_transform(  # noqa: ANN201, PLR0913
         if density_check:
             try:  # raises GeodenseError when all geometries in body are (multi)point
                 # max_segment_deviation path sets body.bbox in place (request_body_within_valid_bbox)
-                d_body = copy.deepcopy(body) if max_segment_deviation is not None else body
+                d_body = copy.deepcopy(body)
                 fc_report = density_check_request_body(d_body, s_crs, max_segment_deviation, max_segment_length, epoch)
                 result = DensityCheckReport.from_fc_report(fc_report)
                 if result.check_result:
