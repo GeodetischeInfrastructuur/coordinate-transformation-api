@@ -9,7 +9,7 @@ class DataValidationError(Exception):
     type_str = "nsgi.nl/data-validation-error"
     title = "Data Validation Error"
 
-    def __init__(self: "DataValidationError", message: str, extra: dict | None = None) -> None:
+    def __init__(self: DataValidationError, message: str, extra: dict | None = None) -> None:
         super().__init__(message)
         if extra is None:
             extra = {}
@@ -33,7 +33,7 @@ class CrsNotFoundError(NotFoundError):
     title = "CRS Not Found Error"
 
     def __init__(
-        self: "CrsNotFoundError",
+        self: CrsNotFoundError,
         crs_id: str,
     ) -> None:
         # Call the base class constructor with the parameters it needs
@@ -47,7 +47,7 @@ class TransformationNotPossibleError(DataValidationError):
     title = "Transformation Not Possible"
 
     def __init__(
-        self: "TransformationNotPossibleError",
+        self: TransformationNotPossibleError,
         src_crs: ProjCrs,
         target_crs: ProjCrs,
         reason: str = "no transformation path available",
@@ -61,10 +61,10 @@ class TransformationNotPossibleError(DataValidationError):
         super().__init__(message)
         # Now for your custom code...
 
-    def src_crs_str(self: "TransformationNotPossibleError") -> str:
+    def src_crs_str(self: TransformationNotPossibleError) -> str:
         return "{}:{}".format(*self.src_crs.to_authority())
 
-    def target_crs_str(self: "TransformationNotPossibleError") -> str:
+    def target_crs_str(self: TransformationNotPossibleError) -> str:
         return "{}:{}".format(*self.target_crs.to_authority())
 
 
@@ -73,7 +73,7 @@ class DensityCheckFailedError(DataValidationError):
     title = "Density Check Failed"
 
     def __init__(
-        self: "DensityCheckFailedError",
+        self: DensityCheckFailedError,
         message: str,
         report: CrsFeatureCollection,
     ) -> None:
@@ -126,7 +126,7 @@ class DensityCheckReport(BaseModel):
     def from_fc_report(
         cls,
         fc_report: CrsFeatureCollection,
-    ) -> "DensityCheckReport":
+    ) -> DensityCheckReport:
         check_result = len(fc_report.features) == 0
         return DensityCheckReport(
             checkResult=check_result,
@@ -166,7 +166,7 @@ class Crs(BaseModel):
     identifier: str
 
     @classmethod
-    def from_crs_str(cls, crs_str: str) -> "Crs":
+    def from_crs_str(cls, crs_str: str) -> Crs:
         # Do some math here and later set the values
         auth, identifier = crs_str.split(":")
         pyproj_crs = ProjCrs.from_authority(auth, identifier)
@@ -194,12 +194,12 @@ class Crs(BaseModel):
 
     @computed_field
     @property
-    def nr_of_dimensions(self: "Crs") -> int:
+    def nr_of_dimensions(self: Crs) -> int:
         return len(self.axes)
 
     axes: list[Axis]
 
-    def get_x_unit_crs(self: "Crs") -> str:
+    def get_x_unit_crs(self: Crs) -> str:
         axe = next(
             (x for x in self.axes if x.abbrev.lower() in ["x", "e", "lon"]),
             None,

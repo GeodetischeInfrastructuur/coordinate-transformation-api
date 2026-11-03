@@ -8,14 +8,14 @@ from pythonjsonlogger import json as jsonlogger
 class CustomJsonFormatter(jsonlogger.JsonFormatter):
     """Custom JSON formatter for structured logging."""
 
-    def __init__(self: "CustomJsonFormatter", *args: object, use_colors: bool = False, **kwargs: object) -> None:  # noqa: ARG002
+    def __init__(self: CustomJsonFormatter, *args: object, use_colors: bool = False, **kwargs: object) -> None:  # noqa: ARG002
         """Initialize formatter, ignoring use_colors parameter added by uvicorn."""
         # Remove use_colors from kwargs if present, as pythonjsonlogger doesn't support it
         kwargs.pop("use_colors", None)
         super().__init__(*args, **kwargs)  # type: ignore
 
     def add_fields(
-        self: "CustomJsonFormatter", log_data: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
+        self: CustomJsonFormatter, log_data: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
     ) -> None:
         super().add_fields(log_data, record, message_dict)
         # Add timestamp with ISO format
@@ -33,7 +33,7 @@ class AccessLogFormatter(jsonlogger.JsonFormatter):
     """Custom JSON formatter for access logs with client IP and optional X-Forwarded-For."""
 
     def __init__(
-        self: "AccessLogFormatter",
+        self: AccessLogFormatter,
         *args: object,
         log_forwarded_for: bool = False,
         client_ip_header: str | None = None,
@@ -48,7 +48,7 @@ class AccessLogFormatter(jsonlogger.JsonFormatter):
         self.client_ip_header = client_ip_header
 
     def add_fields(
-        self: "AccessLogFormatter", log_data: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
+        self: AccessLogFormatter, log_data: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]
     ) -> None:
         super().add_fields(log_data, record, message_dict)
         # Add timestamp with ISO format
@@ -71,7 +71,7 @@ class AccessLogFormatter(jsonlogger.JsonFormatter):
                     log_data["path"] = args[2]
                     log_data["http_version"] = args[3]
                     log_data["status_code"] = args[4]
-            except (IndexError, AttributeError, TypeError):
+            except IndexError, AttributeError, TypeError:
                 pass
 
         # Add X-Forwarded-For if configured and available

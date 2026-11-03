@@ -17,13 +17,13 @@ class RequestMetadataFilter(logging.Filter):
     """Logging filter that adds request metadata from thread-local storage."""
 
     def __init__(
-        self: "RequestMetadataFilter", log_forwarded_for: bool = False, client_ip_header: str | None = None
+        self: RequestMetadataFilter, log_forwarded_for: bool = False, client_ip_header: str | None = None
     ) -> None:
         super().__init__()
         self.log_forwarded_for = log_forwarded_for
         self.client_ip_header = client_ip_header
 
-    def filter(self: "RequestMetadataFilter", record: logging.LogRecord) -> bool:
+    def filter(self: RequestMetadataFilter, record: logging.LogRecord) -> bool:
         """Add request metadata to log record."""
         # Get host from thread-local storage
         host = getattr(_request_data, "host", None)
@@ -54,7 +54,7 @@ class AccessLogMiddleware(BaseHTTPMiddleware):
     """Middleware to add request metadata (Host, X-Forwarded-For, response time) to access logs."""
 
     def __init__(
-        self: "AccessLogMiddleware",
+        self: AccessLogMiddleware,
         app: ASGIApp,
         log_forwarded_for: bool = False,
         client_ip_header: str | None = None,
@@ -64,7 +64,7 @@ class AccessLogMiddleware(BaseHTTPMiddleware):
         self.client_ip_header = client_ip_header
 
     async def dispatch(
-        self: "AccessLogMiddleware", request: Request, call_next: Callable[[Request], Awaitable[Response]]
+        self: AccessLogMiddleware, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
         """Process request and add request metadata to thread-local storage."""
         # Record start time

@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager, suppress
 from importlib import resources as impresources
 from typing import Annotated, Any
 
+import orjson
 import pyproj
 import uvicorn
 from fastapi import FastAPI, Header, Query, Request, Response
@@ -137,15 +138,16 @@ if app_settings.cors_allow_origins:
 
 
 @app.exception_handler(DensityCheckFailedError)
-async def density_check_failed_handler(_: Request, exc: DensityCheckFailedError) -> JSONResponse:
+async def density_check_failed_handler(_: Request, exc: DensityCheckFailedError) -> Response:
     logger.debug({str(exc)})
 
     problem_error = from_data_validation_error(exc)
     response_data = problem_error.to_dict()
 
-    return JSONResponse(
+    return Response(
         status_code=problem_error.status,
-        content=response_data,
+        content=orjson.dumps(response_data),
+        media_type="application/json",
         headers={DENSITY_CHECK_RESULT_HEADER: "failed"},
     )
 
@@ -379,8 +381,9 @@ async def densify(  # noqa: ANN201
     s_crs = get_src_crs_densify(body, source_crs_str, content_crs_str)
     body_d = densify_request_body(body, s_crs, max_segment_deviation, max_segment_length)
 
-    return JSONResponse(
-        content=body_d.model_dump(exclude_none=True),
+    return Response(
+        content=orjson.dumps(body_d.model_dump(exclude_none=True)),
+        media_type="application/json",
         headers=set_response_headers(("content-crs", Crs.from_crs_str(s_crs).crs)),
     )
 
@@ -418,11 +421,15 @@ async def density_check(  # noqa: ANN201
     headers = {}
     if not report.check_result:
         headers = set_response_headers(("content-crs", Crs.from_crs_str(s_crs).crs))
-    return JSONResponse(report.model_dump(exclude_none=True), headers=headers)
+    return Response(
+        content=orjson.dumps(report.model_dump(exclude_none=True)),
+        media_type="application/json",
+        headers=headers,
+    )
 
 
 @app.get("/transform")
-async def transform(  # noqa: PLR0913, ANN201
+async def transform(  # noqa: PLR0913, ANN201, PLR0917
     coordinates: Annotated[
         str,
         Query(alias="coordinates", pattern=r"^(-?\d+\.?\d*),(-?\d+\.?\d*)(,-?\d+\.?\d*)?$"),
@@ -478,8 +485,9 @@ async def transform(  # noqa: PLR0913, ANN201
         wkt_string = convert_point_coords_to_wkt(position_t)
         return PlainTextResponse(wkt_string, headers=headers)
     else:  # default case serve json
-        return JSONResponse(
-            content={"type": "Point", "coordinates": position_t},
+        return Response(
+            content=orjson.dumps({"type": "Point", "coordinates": list(position_t)}),
+            media_type="application/json",
             headers=headers,
         )
 
@@ -489,7 +497,7 @@ async def transform(  # noqa: PLR0913, ANN201
     response_model=Feature | CrsFeatureCollection | Geometry | GeometryCollection | CityjsonV113,
     response_model_exclude_none=True,
 )
-async def post_transform(  # noqa: ANN201, PLR0913
+async def post_transform(  # noqa: ANN201, PLR0913, PLR0917
     body: Feature | CrsFeatureCollection | Geometry | GeometryCollection | CityjsonV113,
     source_crs: Annotated[CrsEnum | None, Query(alias="source-crs")] = None,
     target_crs: Annotated[CrsEnum | None, Query(alias="target-crs")] = None,
@@ -529,13 +537,15 @@ async def post_transform(  # noqa: ANN201, PLR0913
     else:
         if density_check:
             try:  # raises GeodenseError when all geometries in body are (multi)point
+                # max_segment_deviation path sets body.bbox in place (request_body_within_valid_bbox)
                 d_body = copy.deepcopy(body)
                 fc_report = density_check_request_body(d_body, s_crs, max_segment_deviation, max_segment_length, epoch)
                 result = DensityCheckReport.from_fc_report(fc_report)
                 if result.check_result:
-                    response_headers = set_response_headers(
-                        (DENSITY_CHECK_RESULT_HEADER, DensityCheckResult.success.value)
-                    )
+                    response_headers = set_response_headers((
+                        DENSITY_CHECK_RESULT_HEADER,
+                        DensityCheckResult.success.value,
+                    ))
                 else:
                     val_name = "max_segment_length"
                     val = max_segment_length
@@ -575,8 +585,9 @@ async def post_transform(  # noqa: ANN201, PLR0913
             response_headers = set_response_headers(("epoch", epoch), headers=response_headers)
 
         response_body = body_t.model_dump(exclude_none=True)
-        return JSONResponse(
-            content=response_body,
+        return Response(
+            content=orjson.dumps(response_body),
+            media_type="application/json",
             headers=response_headers,
         )
 

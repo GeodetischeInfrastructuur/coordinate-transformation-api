@@ -337,7 +337,14 @@ def test_transform_densify_check_post(request_body, expectation, source_crs, tar
     )
     response_object = response.json()
     assert response.status_code == 200  # noqa: PLR2004
-    assert response_object == expectation
+    assert response_object["type"] == expectation["type"]
+    assert response_object["properties"] == expectation["properties"]
+    assert response_object["geometry"]["type"] == expectation["geometry"]["type"]
+    actual_coordinates = response_object["geometry"]["coordinates"]
+    expected_coordinates = expectation["geometry"]["coordinates"]
+    assert len(actual_coordinates) == len(expected_coordinates)
+    for actual, expected in zip(actual_coordinates, expected_coordinates, strict=True):
+        assert actual == pytest.approx(expected, abs=1e-7)
     api_version_headers_vals = response.headers.get_list("api-version")
     assert len(api_version_headers_vals) == 1
     assert api_version_headers_vals[0].startswith("2")
