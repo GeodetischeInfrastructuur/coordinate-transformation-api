@@ -35,7 +35,7 @@ dev= [
     "ruff == 0.15.15",
     "types-ujson == 5.10.0.20250822",
     "types-PyYAML == 6.0.12.20260518",
-    "pytest-asyncio==1.4.1",
+    "pytest-asyncio==1.4.1.post1",
     "types-shapely>=2.0.0.20240820",
     "httpx2>=2.16.0",
 ]
