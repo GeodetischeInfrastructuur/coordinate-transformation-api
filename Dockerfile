@@ -24,6 +24,7 @@ WORKDIR /src_app
 
 # 1. Install dependencies only (no dev packages) for cache efficiency
 COPY pyproject.toml uv.lock ./
+
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --no-install-project
 
@@ -42,17 +43,7 @@ LABEL org.opencontainers.image.authors="NSGI <info@nsgi.nl>"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/opt/venv/bin:${PATH}" \
-    PROJ_DATA="/opt/venv/lib/python${PYTHON_VERSION}/site-packages/pyproj/proj_dir/share/proj"
-
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    libcurl3t64-gnutls \
-    libtiff6 \
-    ca-certificates \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+    PATH="/opt/venv/bin:${PATH}"
 
 RUN groupadd -r app && \
     useradd -r -s /usr/sbin/nologin -d /nonexistent -g app -N app
