@@ -14,10 +14,10 @@ dependencies = [
     "uvicorn==0.54.0",
     "pyyaml == 6.0.3",
     "geojson-pydantic>=2,<3",
-    "pyproj @ https://github.com/GeodetischeInfrastructuur/transformations/releases/download/2.2.0-rc2-proj9.7.1/pyproj-3.7.2+nsgi2.2.0rc2-cp315-cp315-linux_x86_64.whl",
+    "pyproj @ https://github.com/GeodetischeInfrastructuur/transformations/releases/download/2.2.0-build1-proj9.7.1/pyproj-3.7.2+nsgi2.2.0.build1-cp315-cp315-manylinux_2_28_x86_64.whl",
     "pydantic-settings==2.16.2",
     "email-validator == 2.3.0",
-    "geodense @ https://github.com/GeodetischeInfrastructuur/geodense/releases/download/3.0.0rc3/geodense-3.0.0rc3-py3-none-any.whl",
+    "geodense @ https://github.com/GeodetischeInfrastructuur/geodense/releases/download/3.0.1/geodense-3.0.1-py3-none-any.whl",
     "shapely == 2.2.0",
     "python-json-logger >=4.2.0",
     "orjson == 3.13.0",
@@ -164,5 +164,5 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.uv]
 required-version = '>=0.13.6'
 cache-keys = [{ file = "pyproject.toml" }, { git = true }]
-exclude-newer = '8 days'
+# exclude-newer = '8 days'
 exclude-newer-package = { certifi = false }

@@ -12,31 +12,24 @@ Build on top of pyproj and FastAPI.
 
 ## pyproj
 
-> :warning: pyproj makes use of it's own proj binaries and `PROJ_DIR`. These are set when pyproj is build.
+> :warning: pyproj makes use of its own proj binaries and `PROJ_DIR`. These are set when pyproj is built.
 
-Pyproj with default configuration is not capable in performing the right transformations, because our primary
-transformations layer on the following transformation grids:
+The coordinate transformation API uses a **custom pyproj release** that includes:
 
-Recommended RDNAPTRANS(TM)2018 variant:
+- NSGI-specific CRS definitions (e.g., `NSGI:Bonaire_DPnet`, `NSGI:Saba_DPnet`)
+- Updated `proj.db` database with all required transformations
+- RDNAPTRANS(TM)2018 transformation grids:
+  - `nl_nsgi_nlgeo2018.tif`
+  - `nl_nsgi_rdcorr2018.tif`
+  - `nl_nsgi_rdtrans2018.tif`
+- Optional time-dependent `proj.db` database
+- Additional grids for Caribbean island transformations (e.g., `bq_nsgi_bongeo2004.tif`)
 
-- [`https://cdn.proj.org/nl_nsgi_nlgeo2018.tif`](https://cdn.proj.org/nl_nsgi_nlgeo2018.tif)
-- [`https://cdn.proj.org/nl_nsgi_rdcorr2018.tif`](https://cdn.proj.org/nl_nsgi_rdcorr2018.tif)
+**All required transformation data is already packaged with the pyproj release** installed from the custom URL in
+`pyproject.toml`. No additional manual installation of transformation grids is needed.
 
-And the geoid for BESTRANS2020.
-
-These transformation grids need to be downloaded from the [PROJ.org Datumgrid CDN](https://cdn.proj.org/) and put in the
-correct directory. This can be done in a couple of ways.
-
-1. Enable [`PROJ_NETWORK`](https://proj.org/en/9.1/usage/environmentvars.html#envvar-PROJ_NETWORK) environment variable
-2. Edit [`proj.ini`](https://proj.org/en/9.1/resource_files.html#proj-ini) file by setting `network = on`
-
-These will download the necessary files to a cache so they can be use for the correct transformation. But this requires
-a network connection, preferable we don't want to rely on this network connection and provide these files with the
-application. This can be done by:
-
-1. [Mirror](https://pyproj4.github.io/pyproj/stable/transformation_grids.html) <https://dcn.proj.org> and write the
-   these file to the data directory
-2. Download the specific files to the root of the data directory
+The application is configured to automatically use the https://github.com/GeodetischeInfrastructuur/transformations
+time-dependent `proj.db` (and additional assets).
 
 ## Development
 
@@ -90,33 +83,26 @@ spectral lint http://127.0.0.1:8000/openapi.json --ruleset /tmp/ruleset.yaml
 rm /tmp/ruleset.yaml
 ```
 
-### Install NSGI proj.db
+### pyproj Installation
 
-Execute the following shell commands to install the NSGI `proj.time.dependent.transformations.db` as `proj.db` from the
-[GeodetischeInfrastructuur/transformations](https://github.com/GeodetischeInfrastructuur/transformations/releases) repo:
+The application uses a custom pyproj release that bundles all required transformation data. The release is specified in
+`pyproject.toml`:
 
-```sh
-NSGI_PROJ_DB_VERSION=$(sed -rn 's/ARG NSGI_PROJ_DB_VERSION="(.*)"/\1/p' < Dockerfile)
-proj_data_dir=$(python3 -c 'import pyproj;print(pyproj.datadir.get_data_dir());')
-# ( cmd ) -> subshell to execute commands in $proj_data_dir without changing workdir of current shell
-(
-   cd "$proj_data_dir"
-   echo "NSGI PROJ DB VERSION: $NSGI_PROJ_DB_VERSION"
-   curl -sL --show-error -w "%{url}\n" -o nl_nsgi_nlgeo2018.tif https://cdn.proj.org/nl_nsgi_nlgeo2018.tif && \
-   curl -sL --show-error -w "%{url}\n" -o nl_nsgi_rdcorr2018.tif https://cdn.proj.org/nl_nsgi_rdcorr2018.tif && \
-   curl -sL --show-error -w "%{url}\n" -o nl_nsgi_rdtrans2018.tif https://cdn.proj.org/nl_nsgi_rdtrans2018.tif && \
-   release_url="https://api.github.com/repos/GeodetischeInfrastructuur/transformations/releases/tags/${NSGI_PROJ_DB_VERSION}" && \
-   curl -sL --show-error -w "%{url}\n" -H "Accept: application/octet-stream" \
-      $(curl -s "$release_url" | jq -r '.assets[] | select(.name=="bq_nsgi_bongeo2004.tif").url') -o bq_nsgi_bongeo2004.tif && \
-   curl -sL --show-error -w "%{url}\n" -H "Accept: application/octet-stream" \
-      $(curl -s "$release_url" | jq -r '.assets[] | select(.name=="nllat2018.gtx").url') -o nllat2018.gtx && \
-   curl -sL --show-error -w "%{url}\n" -H "Accept: application/octet-stream" \
-      $(curl -s "$release_url" | jq -r '.assets[] | select(.name=="proj.time.dependent.transformations.db").url') -o proj.db
-)
+```toml
+pyproj @ https://github.com/GeodetischeInfrastructuur/transformations/releases/download/2.2.0-proj9.7.1/pyproj-3.7.2+nsgi2.2.0-cp315-cp315-manylinux_2_28_x86_64.whl
 ```
 
-> :warning: For 'default' usage, like QGIS, use the proj.db. The coordinate transformation API it self uses the
-> proj.time.dependent.transformations.db for specific time dependent transformations.
+When you install dependencies with `uv sync` (or `pip install`), this custom pyproj release is automatically downloaded
+and installed with all its bundled transformation data:
+
+- Updated `proj.db` with NSGI CRS definitions
+- Time-dependent transformation database for epoch-aware transformations
+- All required RDNAPTRANS(TM)2018 and Caribbean transformation grids
+- Geoid data for altitude transformations
+
+**No manual installation of transformation grids is required.** The `PROJ_DATA` environment variable is automatically
+configured by the application startup to use the bundled data (see
+[main.py](src/coordinate_transformation_api/main.py#L97)).
 
 ### Update Swagger UI JS/CSS dep
 
