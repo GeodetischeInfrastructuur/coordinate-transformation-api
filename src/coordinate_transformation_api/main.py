@@ -83,7 +83,7 @@ crs_identifiers: list[str] = OPEN_API_SPEC["components"]["schemas"]["CrsEnum"]["
 crs_header_identifiers: list[str] = OPEN_API_SPEC["components"]["schemas"]["CrsHeaderEnum"]["enum"]
 CRS_LIST = [Crs.from_crs_str(x) for x in crs_identifiers]
 BASE_DIR: str = os.path.dirname(__file__)
-logger: logging.Logger
+logger: logging.Logger = logging.getLogger(__name__)
 
 CrsEnum: enum = enum.Enum("CrsEnum", {x.replace(":", "_"): x for x in crs_identifiers})  # type: ignore
 CrsHeaderEnum: enum = enum.Enum("CrsHeaderEnum", {x.replace(":", "_"): x for x in crs_header_identifiers})  # type: ignore
@@ -91,8 +91,6 @@ CrsHeaderEnum: enum = enum.Enum("CrsHeaderEnum", {x.replace(":", "_"): x for x i
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncGenerator:
-    global logger  # noqa: PLW0603
-    logger = logging.getLogger(__name__)
     logger.info(f"settings: {app_settings}")
     logger.info(f"pyproj datadir: {pyproj.datadir.get_data_dir()}")  # type: ignore
     if not app_settings.debug:  # suppres pyproj warnings in prod
@@ -139,7 +137,7 @@ if app_settings.cors_allow_origins:
 
 @app.exception_handler(DensityCheckFailedError)
 async def density_check_failed_handler(_: Request, exc: DensityCheckFailedError) -> Response:
-    logger.debug({str(exc)})
+    logger.debug(str(exc))
 
     problem_error = from_data_validation_error(exc)
     response_data = problem_error.to_dict()
