@@ -4,12 +4,12 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   linting_and_tests:
     name: Linting, Type Check and Tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     # strategy:
     #   matrix:
     #     python-version: ['3.11']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0  # to fetch all history for all branches and tags; required because we derive app version from latest tag
           fetch-tags: true
@@ -20,7 +20,7 @@ jobs:
       #     python-version: ${{ matrix.python-version }}
       #     conda-channels: anaconda, conda-forge
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2
       - name: Install dependencies
         run: |
           uv sync --dev
