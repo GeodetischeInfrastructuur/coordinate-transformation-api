@@ -75,7 +75,7 @@ class DensityCheckFailedError(DataValidationError):
     def __init__(
         self: DensityCheckFailedError,
         message: str,
-        report: CrsFeatureCollection,
+        report: DensityCheckReport,
     ) -> None:
         # Call the base class constructor with the parameters it needs
         super().__init__(message)
