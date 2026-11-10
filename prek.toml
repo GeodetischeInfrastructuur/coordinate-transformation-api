@@ -35,6 +35,19 @@ id = "ruff-format"
 [[repos]]
 repo = "local"
 [[repos.hooks]]
+id = "ty"
+name = "ty (uv type checker)"
+stages = ["pre-commit"]
+types = ["python"]
+entry = "ty check"
+language = "system"
+pass_filenames = false
+args = ["src", "tests"]
+
+
+[[repos]]
+repo = "local"
+[[repos.hooks]]
 id = "pytest-check"
 name = "pytest-check"
 stages = [ "pre-commit",]

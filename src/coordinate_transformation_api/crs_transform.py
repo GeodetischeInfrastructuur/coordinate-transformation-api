@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any, cast
 
 import numpy as np
-import pyproj
 import yaml
 from geodense.lib import (
     GeojsonObject,
@@ -25,7 +24,7 @@ from geojson_pydantic.types import (
     Position2D,
     Position3D,
 )
-from pyproj import CRS, Transformer, transformer
+from pyproj import CRS, Transformer, datadir, transformer
 from shapely import GeometryCollection as ShpGeometryCollection
 from shapely.geometry import shape
 
@@ -48,12 +47,12 @@ with open(str(crs_conf)) as f:
 
 
 def init_proj_data_dir() -> Path:
-    current = Path(pyproj.datadir.get_data_dir())
+    current = Path(datadir.get_data_dir())
     if current.name != "proj_time_dependent":
         target = current.parent / "proj_time_dependent"
         if target.exists():
-            pyproj.datadir.set_data_dir(target)
-    return Path(pyproj.datadir.get_data_dir())
+            datadir.set_data_dir(target)
+    return Path(datadir.get_data_dir())
 
 
 def get_precision(crs: CRS) -> int:

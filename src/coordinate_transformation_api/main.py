@@ -550,9 +550,11 @@ async def post_transform(  # noqa: ANN201, PLR0913, PLR0917
                     if max_segment_deviation is not None:
                         val_name = "max_segment_deviation"
                         val = max_segment_deviation
+                    # When check_result is False, failed_line_segments is guaranteed to contain the fc_report
+                    assert result.failed_line_segments is not None
                     raise DensityCheckFailedError(
                         f"density-check failed, with following query parameters: density-check: True, {val_name.replace('_', '-')}: {val}",
-                        result.model_dump(by_alias=True),
+                        result.failed_line_segments,
                     )
             except GeodenseError as e:
                 if str(e) == "GeoJSON contains only (Multi)Point geometries":
@@ -590,7 +592,7 @@ async def post_transform(  # noqa: ANN201, PLR0913, PLR0917
         )
 
 
-app.openapi = lambda: OPEN_API_SPEC  # type: ignore
+app.openapi = lambda: OPEN_API_SPEC
 
 
 def get_logging_config() -> dict[str, Any]:
