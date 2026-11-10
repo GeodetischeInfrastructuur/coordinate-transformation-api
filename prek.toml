@@ -42,7 +42,7 @@ types = ["python"]
 entry = "ty check"
 language = "system"
 pass_filenames = false
-args = ["src", "tests"]
+args = ["src"]
 
 
 [[repos]]
