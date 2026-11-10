@@ -557,7 +557,7 @@ async def post_transform(  # noqa: ANN201, PLR0913, PLR0917
                         )
                     raise DensityCheckFailedError(
                         f"density-check failed, with following query parameters: density-check: True, {val_name.replace('_', '-')}: {val}",
-                        result.failed_line_segments,
+                        result,
                     )
             except GeodenseError as e:
                 if str(e) == "GeoJSON contains only (Multi)Point geometries":

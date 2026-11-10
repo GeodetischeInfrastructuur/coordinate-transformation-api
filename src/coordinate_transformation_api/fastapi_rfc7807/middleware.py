@@ -266,7 +266,7 @@ def from_response_validation_error(exc: ResponseValidationError) -> ProblemError
 def from_data_validation_error(exc: DataValidationError) -> ProblemError:
     extra = {}
     if isinstance(exc, DensityCheckFailedError):
-        extra = {"report": exc.report}
+        extra = {"report": exc.report.model_dump()}
 
     return ProblemError(
         type=exc.type_str,
