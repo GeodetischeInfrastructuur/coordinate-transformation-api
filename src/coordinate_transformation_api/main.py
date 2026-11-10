@@ -10,7 +10,6 @@ from importlib import resources as impresources
 from typing import Annotated, Any
 
 import orjson
-import pyproj
 import uvicorn
 from fastapi import FastAPI, Header, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -33,6 +32,7 @@ from coordinate_transformation_api.constants import (
 )
 from coordinate_transformation_api.crs_transform import (
     CRS_CONFIG,
+    init_proj_data_dir,
 )
 from coordinate_transformation_api.fastapi_rfc7807 import middleware
 from coordinate_transformation_api.fastapi_rfc7807.middleware import from_data_validation_error
@@ -92,7 +92,7 @@ CrsHeaderEnum: enum = enum.Enum("CrsHeaderEnum", {x.replace(":", "_"): x for x i
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncGenerator:
     logger.info(f"settings: {app_settings}")
-    logger.info(f"pyproj datadir: {pyproj.datadir.get_data_dir()}")  # type: ignore
+    init_proj_data_dir()
     if not app_settings.debug:  # suppres pyproj warnings in prod
         logging.getLogger("pyproj").setLevel(logging.ERROR)
     with suppress(asyncio.CancelledError):  # required for cancellation see runner method

@@ -85,11 +85,12 @@ rm /tmp/ruleset.yaml
 
 ### pyproj Installation
 
-The application uses a custom pyproj release that bundles all required transformation data. The release is specified in
-`pyproject.toml`:
+The application uses a custom pyproj release that bundles all required transformation data. Both this application and
+the geodense library rely on this same custom pyproj release. Both are specified in `pyproject.toml`:
 
 ```toml
-pyproj @ https://github.com/GeodetischeInfrastructuur/transformations/releases/download/2.2.0-proj9.7.1/pyproj-3.7.2+nsgi2.2.0-cp315-cp315-manylinux_2_28_x86_64.whl
+pyproj @ https://github.com/GeodetischeInfrastructuur/transformations/releases/download/2.2.0-build1-proj9.7.1/pyproj-3.7.2+nsgi2.2.0.build1-cp315-cp315-manylinux_2_28_x86_64.whl
+geodense @ https://github.com/GeodetischeInfrastructuur/geodense/releases/download/3.0.1/geodense-3.0.1-py3-none-any.whl
 ```
 
 When you install dependencies with `uv sync` (or `pip install`), this custom pyproj release is automatically downloaded
@@ -102,7 +103,7 @@ and installed with all its bundled transformation data:
 
 **No manual installation of transformation grids is required.** The `PROJ_DATA` environment variable is automatically
 configured by the application startup to use the bundled data (see
-[main.py](src/coordinate_transformation_api/main.py#L97)).
+[main.py](src/coordinate_transformation_api/main.py#L96)).
 
 ### Update Swagger UI JS/CSS dep
 

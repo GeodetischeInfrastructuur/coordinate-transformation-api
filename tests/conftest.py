@@ -3,6 +3,13 @@ import os
 import pytest
 from geodense.lib import textio_to_geojson
 
+from coordinate_transformation_api.crs_transform import init_proj_data_dir
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_proj_data_dir():
+    init_proj_data_dir()
+
 
 @pytest.fixture
 def test_dir():

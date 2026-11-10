@@ -3,9 +3,11 @@ from collections.abc import Callable, Generator
 from functools import partial, wraps
 from importlib import resources as impresources
 from itertools import chain
+from pathlib import Path
 from typing import Any, cast
 
 import numpy as np
+import pyproj
 import yaml
 from geodense.lib import (
     GeojsonObject,
@@ -43,6 +45,15 @@ assets_resources = impresources.files(assets)
 crs_conf = assets_resources.joinpath("crs-config.yaml")
 with open(str(crs_conf)) as f:
     CRS_CONFIG = yaml.safe_load(f)
+
+
+def init_proj_data_dir() -> Path:
+    current = Path(pyproj.datadir.get_data_dir())
+    if current.name != "proj_time_dependent":
+        target = current.parent / "proj_time_dependent"
+        if target.exists():
+            pyproj.datadir.set_data_dir(target)
+    return Path(pyproj.datadir.get_data_dir())
 
 
 def get_precision(crs: CRS) -> int:
