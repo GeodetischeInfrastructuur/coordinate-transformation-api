@@ -551,7 +551,10 @@ async def post_transform(  # noqa: ANN201, PLR0913, PLR0917
                         val_name = "max_segment_deviation"
                         val = max_segment_deviation
                     # When check_result is False, failed_line_segments is guaranteed to contain the fc_report
-                    assert result.failed_line_segments is not None
+                    if result.failed_line_segments is None:
+                        raise RuntimeError(
+                            "DensityCheckReport invariant violated: failed_line_segments is None when check_result is False"
+                        )
                     raise DensityCheckFailedError(
                         f"density-check failed, with following query parameters: density-check: True, {val_name.replace('_', '-')}: {val}",
                         result.failed_line_segments,
